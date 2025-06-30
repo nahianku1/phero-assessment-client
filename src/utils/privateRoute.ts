@@ -1,10 +1,10 @@
 import { isAuthenticated } from "./isAuthenticated";
 import { redirect } from "@tanstack/react-router";
 
-export const beforeLoad = async () => {
+export const privateRoute = async () => {
   const data = await isAuthenticated();
   if (!data.success) {
-    return redirect({ to: "/login" });
+    throw redirect({ to: "/login" });
   } else {
     return { user: data.data };
   }
