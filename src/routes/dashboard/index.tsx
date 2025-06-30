@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router"
 import React from "react";
-import { Button } from "@/components/ui/button"; // shadcn/ui Button
 import { Calendar, Users, Clock } from "lucide-react"; // Icons for cards
 
 // Mock data for Your Events
@@ -60,17 +59,6 @@ const Home: React.FC = () => {
   const eventsJoined = 45;
   const upcomingEventsCount = 8;
 
-  // Handlers for Update and Delete (placeholder)
-  const handleUpdate = (id: string) => {
-    console.log(`Update event with ID: ${id}`);
-    // Add update logic here (e.g., navigate to update page)
-  };
-
-  const handleDelete = (id: string) => {
-    console.log(`Delete event with ID: ${id}`);
-    // Add delete logic here (e.g., API call)
-  };
-
   return (
     <div className="space-y-8 px-3">
       {/* Metric Cards Section */}
@@ -113,8 +101,9 @@ const Home: React.FC = () => {
           {yourEvents.map((event) => (
             <div
               key={event.id}
-              className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6 space-y-4 hover:shadow-xl transition-shadow duration-300 border border-gray-200"
+              className="bg-white/90 backdrop-blur-sm rounded-xl shadow-md border border-gray-200 p-6 space-y-4 hover:bg-gradient-to-br from-white/95 to-gray-100"
             >
+              <span className="inline-block bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-semibold px-2 py-1 rounded-full">Top Event</span>
               <h3 className="text-xl font-semibold text-gray-900">
                 {event.title}
               </h3>
@@ -128,24 +117,6 @@ const Home: React.FC = () => {
                   {event.attendeeCount} Attendees
                 </p>
                 <p className="text-gray-600">{event.location}</p>
-              </div>
-              <div className="flex space-x-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleUpdate(event.id)}
-                  className="text-blue-600 hover:text-blue-800"
-                >
-                  Update
-                </Button>
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => handleDelete(event.id)}
-                  className="bg-red-500 hover:bg-red-600"
-                >
-                  Delete
-                </Button>
               </div>
             </div>
           ))}
@@ -161,8 +132,9 @@ const Home: React.FC = () => {
           {upcomingEvents.map((event) => (
             <div
               key={event.id}
-              className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6 space-y-4 hover:shadow-xl transition-shadow duration-300 border border-purple-300"
+              className="bg-white/90 backdrop-blur-sm rounded-xl shadow-md border border-purple-300 p-6 space-y-4 hover:bg-gradient-to-br from-white/95 to-gray-100"
             >
+              <span className="inline-block bg-gradient-to-r from-purple-400 to-indigo-500 text-white text-xs font-semibold px-2 py-1 rounded-full">Upcoming</span>
               <h3 className="text-xl font-semibold text-gray-900">
                 {event.title}
               </h3>
@@ -177,24 +149,6 @@ const Home: React.FC = () => {
                 </p>
                 <p className="text-gray-600">{event.location}</p>
               </div>
-              <div className="flex space-x-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleUpdate(event.id)}
-                  className="text-purple-600 hover:text-purple-800"
-                >
-                  Update
-                </Button>
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => handleDelete(event.id)}
-                  className="bg-red-500 hover:bg-red-600"
-                >
-                  Delete
-                </Button>
-              </div>
             </div>
           ))}
         </div>
@@ -204,7 +158,6 @@ const Home: React.FC = () => {
 };
 
 export default Home;
-
 
 export const Route = createFileRoute("/dashboard/")({
   component: Home,
