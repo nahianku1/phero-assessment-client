@@ -1,50 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { useActionState } from 'react';
-import { redirect } from '@tanstack/react-router';
-import { Button } from '@/components/ui/button';
-import { ChevronDown, X, Filter, Search } from 'lucide-react';
-import { isWithinInterval, startOfWeek, endOfWeek, startOfMonth, endOfMonth, subWeeks, subMonths, startOfDay } from 'date-fns';
+import React, { useState, useEffect } from "react";
+import { useActionState } from "react";
+import { redirect } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
+import { ChevronDown, X, Filter, Search } from "lucide-react";
 
 // Mock data (replace with API fetch)
 interface Event {
   id: string;
-  title: string;
-  postedBy: string;
-  dateTime: string;
+  eventTitle: string;
+  name: string;
+  dateAndTime: string;
   location: string;
   description: string;
   attendeeCount: number;
 }
-
-const mockEvents: Event[] = [
-  {
-    id: '1',
-    title: 'Tech Meetup',
-    postedBy: 'John Doe',
-    dateTime: '2025-07-10T18:00:00',
-    location: 'Tech Hub, NYC',
-    description: 'A networking event for tech enthusiasts to collaborate and share innovative ideas and projects.',
-    attendeeCount: 50,
-  },
-  {
-    id: '2',
-    title: 'Music Festival',
-    postedBy: 'Jane Smith',
-    dateTime: '2025-07-10T14:00:00',
-    location: 'Central Park',
-    description: 'Annual music festival with live bands performing a variety of genres for all attendees.',
-    attendeeCount: 200,
-  },
-  {
-    id: '3',
-    title: 'AI Workshop',
-    postedBy: 'Alice Johnson',
-    dateTime: '2025-07-05T10:00:00',
-    location: 'Online',
-    description: 'Learn about AI advancements and applications in a hands-on workshop for beginners and experts.',
-    attendeeCount: 75,
-  },
-];
 
 interface JoinState {
   eventId: string;
@@ -53,106 +22,141 @@ interface JoinState {
 }
 
 const truncateDescription = (text: string, wordLimit: number = 10) => {
-  const words = text.split(' ');
+  const words = text.split(" ");
   if (words.length > wordLimit) {
-    return words.slice(0, wordLimit).join(' ') + '...';
+    return words.slice(0, wordLimit).join(" ") + "...";
   }
   return text;
 };
 
 const Events: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filter, setFilter] = useState<'all' | 'currentWeek' | 'lastWeek' | 'currentMonth' | 'lastMonth'>('all');
-  const [selectedDate, setSelectedDate] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filter, setFilter] = useState<
+    "all" | "today" | "currentWeek" | "lastWeek" | "currentMonth" | "lastMonth"
+  >("all");
+  const [selectedDate, setSelectedDate] = useState<string>("");
   const [joinedEvents, setJoinedEvents] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // Fetch events (mock for now)
+  // Fetch events from API
   useEffect(() => {
-    const sortedEvents = mockEvents.sort((a, b) => {
-      const dateA = new Date(a.dateTime);
-      const dateB = new Date(b.dateTime);
-      return dateB.getTime() - dateA.getTime(); // Descending order
-    });
-    setEvents(sortedEvents);
-    setJoinedEvents(JSON.parse(localStorage.getItem('joinedEvents') || '[]'));
-  }, []);
+    const fetchEvents = async () => {
+      setLoading(true);
+      const params = new URLSearchParams();
+      if (searchQuery) params.append("search", searchQuery);
+      if (selectedDate) params.append("specificDate", selectedDate); // Changed to specificDate
+      if (filter !== "all" && !selectedDate) { // Only apply dateFilter if no specific date is selected
+        const dateFilterMap = {
+          today: "today",
+          currentWeek: "currentweek",
+          lastWeek: "lastweek",
+          currentMonth: "currentmonth",
+          lastMonth: "lastmonth",
+        };
+        params.append("dateFilter", dateFilterMap[filter]);
+      }
+
+      try {
+        const response = await fetch(
+          `http://localhost:3000/events/all-events?${params.toString()}`,
+          { credentials: "include" }
+        );
+        if (!response.ok) throw new Error("Failed to fetch events");
+        const { data } = await response.json();
+        
+        const sortedEvents = data.sort((a: Event, b: Event) => {
+          const dateA = new Date(a.dateAndTime);
+          const dateB = new Date(b.dateAndTime);
+          return dateB.getTime() - dateA.getTime();
+        });
+        setEvents(sortedEvents);
+      } catch (error) {
+        console.error("Error fetching events:", error);
+        setEvents([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchEvents();
+    setJoinedEvents(JSON.parse(localStorage.getItem("joinedEvents") || "[]"));
+  }, [searchQuery, selectedDate, filter]);
 
   // Join event action
-  const joinAction = async (_prevState: JoinState, formData: FormData): Promise<JoinState> => {
-    const eventId = formData.get('eventId') as string;
+  const joinAction = async (
+    _prevState: JoinState,
+    formData: FormData
+  ): Promise<JoinState> => {
+    const eventId = formData.get("eventId") as string;
     if (joinedEvents.includes(eventId)) {
-      return { eventId, error: 'You have already joined this event.', success: false };
+      return {
+        eventId,
+        error: "You have already joined this event.",
+        success: false,
+      };
     }
     try {
-      const response = await fetch(`http://localhost:3000/events/join/${eventId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-      });
+      const response = await fetch(
+        `http://localhost:3000/events/join/${eventId}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+        }
+      );
 
       if (response.ok) {
         setEvents((prev) =>
           prev.map((event) =>
-            event.id === eventId ? { ...event, attendeeCount: event.attendeeCount + 1 } : event
+            event.id === eventId
+              ? { ...event, attendeeCount: event.attendeeCount + 1 }
+              : event
           )
         );
         setJoinedEvents((prev) => {
           const updated = [...prev, eventId];
-          localStorage.setItem('joinedEvents', JSON.stringify(updated));
+          localStorage.setItem("joinedEvents", JSON.stringify(updated));
           return updated;
         });
         return { eventId, error: null, success: true };
       } else {
         const errorData = await response.json();
-        return { eventId, error: errorData.message || 'Failed to join event.', success: false };
+        return {
+          eventId,
+          error: errorData.message || "Failed to join event.",
+          success: false,
+        };
       }
     } catch (error) {
-      return { eventId, error: 'An error occurred while joining the event.', success: false };
+      return {
+        eventId,
+        error: "An error occurred while joining the event.",
+        success: false,
+      };
     }
   };
 
-  const [joinState, joinActionFn] = useActionState(joinAction, { eventId: '', error: null, success: false });
+  const [joinState, joinActionFn] = useActionState(joinAction, {
+    eventId: "",
+    error: null,
+    success: false,
+  });
 
   // Handle filter change
-  const handleFilterChange = (setter: React.Dispatch<React.SetStateAction<string>>) => (value: string) => {
-    setter(value);
-  };
+  const handleFilterChange =
+    (setter: React.Dispatch<React.SetStateAction<string>>) =>
+    (value: string) => {
+      setter(value);
+    };
 
   // Clear filters
   const clearFilters = () => {
-    setSearchQuery('');
-    setFilter('all');
-    setSelectedDate('');
+    setSearchQuery("");
+    setFilter("all");
+    setSelectedDate("");
     setShowFilters(false);
   };
-
-  // Filter events
-  const filteredEvents = events
-    .filter((event) =>
-      event.title.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-    .filter((event) => {
-      const eventDate = new Date(event.dateTime);
-      const now = new Date('2025-06-30T20:25:00+06:00'); // June 30, 2025, 08:25 PM +06
-      if (selectedDate) {
-        const selectedDayStart = startOfDay(new Date(selectedDate));
-        return isWithinInterval(eventDate, { start: selectedDayStart, end: now });
-      }
-      switch (filter) {
-        case 'currentWeek':
-          return isWithinInterval(eventDate, { start: startOfWeek(now), end: now });
-        case 'lastWeek':
-          return isWithinInterval(eventDate, { start: startOfWeek(subWeeks(now, 1)), end: endOfWeek(subWeeks(now, 1)) });
-        case 'currentMonth':
-          return isWithinInterval(eventDate, { start: startOfMonth(now), end: now });
-        case 'lastMonth':
-          return isWithinInterval(eventDate, { start: startOfMonth(subMonths(now, 1)), end: endOfMonth(subMonths(now, 1)) });
-        default:
-          return true;
-      }
-    });
 
   return (
     <div className="p-6 space-y-8 max-w-6xl mx-auto">
@@ -166,7 +170,7 @@ const Events: React.FC = () => {
             <Filter className="w-4 h-4" />
             Filters
             <ChevronDown
-              className={`w-4 h-4 transition-transform ${showFilters ? 'rotate-180' : ''}`}
+              className={`w-4 h-4 transition-transform ${showFilters ? "rotate-180" : ""}`}
             />
           </button>
         </div>
@@ -182,7 +186,9 @@ const Events: React.FC = () => {
                   type="text"
                   placeholder="Search events by title..."
                   value={searchQuery}
-                  onChange={(e) => handleFilterChange(setSearchQuery)(e.target.value)}
+                  onChange={(e) =>
+                    handleFilterChange(setSearchQuery)(e.target.value)
+                  }
                   className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
@@ -194,8 +200,10 @@ const Events: React.FC = () => {
               <input
                 type="date"
                 value={selectedDate}
-                onChange={(e) => handleFilterChange(setSelectedDate)(e.target.value)}
-                max={new Date('2025-06-30').toISOString().split('T')[0]} // Limit to current date
+                onChange={(e) =>
+                  handleFilterChange(setSelectedDate)(e.target.value)
+                }
+                max={new Date("2025-06-30").toISOString().split("T")[0]}
                 className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
@@ -205,10 +213,21 @@ const Events: React.FC = () => {
               </label>
               <select
                 value={filter}
-                onChange={(e) => handleFilterChange(setFilter)(e.target.value as 'all' | 'currentWeek' | 'lastWeek' | 'currentMonth' | 'lastMonth')}
+                onChange={(e) =>
+                  handleFilterChange(setFilter)(
+                    e.target.value as
+                      | "all"
+                      | "today"
+                      | "currentWeek"
+                      | "lastWeek"
+                      | "currentMonth"
+                      | "lastMonth"
+                  )
+                }
                 className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="all">All</option>
+                <option value="today">Today</option>
                 <option value="currentWeek">Current Week</option>
                 <option value="lastWeek">Last Week</option>
                 <option value="currentMonth">Current Month</option>
@@ -230,66 +249,90 @@ const Events: React.FC = () => {
 
       {/* Events Section */}
       <section className="my-8">
-        <h2 className="text-2xl font-semibold text-gray-900 mb-4">All Events</h2>
+        <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+          All Events
+        </h2>
         <div className="overflow-x-auto">
-          <table className="w-full bg-white/90 backdrop-blur-sm rounded-lg shadow-lg border border-gray-200">
-            <thead>
-              <tr className="bg-gray-100 text-gray-700">
-                <th className="p-3 text-left">Event Title</th>
-                <th className="p-3 text-left">Posted By</th>
-                <th className="p-3 text-left">Date and Time</th>
-                <th className="p-3 text-left">Location</th>
-                <th className="p-3 text-left">Description</th>
-                <th className="p-3 text-left">Attendee Count</th>
-                <th className="p-3 text-left">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredEvents.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="p-3 text-center text-gray-600">
-                    No events found.
-                  </td>
+          {loading ? (
+            <div className="text-center text-gray-600">Loading events...</div>
+          ) : (
+            <table className="w-full bg-white/90 backdrop-blur-sm rounded-lg shadow-lg border border-gray-200">
+              <thead>
+                <tr className="bg-gray-100 text-gray-700">
+                  <th className="p-3 text-left">Event Title</th>
+                  <th className="p-3 text-left">Posted By</th>
+                  <th className="p-3 text-left">Date and Time</th>
+                  <th className="p-3 text-left">Location</th>
+                  <th className="p-3 text-left">Description</th>
+                  <th className="p-3 text-left">Attendee Count</th>
+                  <th className="p-3 text-left">Actions</th>
                 </tr>
-              ) : (
-                filteredEvents.map((event) => (
-                  <tr key={event.id} className="border-t border-gray-200 hover:bg-gray-50">
-                    <td className="p-3">{event.title}</td>
-                    <td className="p-3">{event.postedBy}</td>
-                    <td className="p-3">
-                      {new Date(event.dateTime).toLocaleString('en-US', {
-                        dateStyle: 'medium',
-                        timeStyle: 'short',
-                      })}
-                    </td>
-                    <td className="p-3">{event.location}</td>
-                    <td className="p-3 max-w-xs">
-                      <span className="line-clamp-2" title={event.description}>
-                        {truncateDescription(event.description)}
-                      </span>
-                    </td>
-                    <td className="p-3">{event.attendeeCount}</td>
-                    <td className="p-3">
-                      <form action={joinActionFn}>
-                        <input type="hidden" name="eventId" value={event.id} />
-                        <Button
-                          type="submit"
-                          size="sm"
-                          className="w-full bg-green-500 hover:bg-green-600 text-white"
-                          disabled={joinedEvents.includes(event.id) || joinState.eventId === event.id && joinState.error}
-                        >
-                          {joinedEvents.includes(event.id) ? 'Joined' : 'Join Event'}
-                        </Button>
-                      </form>
-                      {joinState.eventId === event.id && joinState.error && (
-                        <p className="text-red-500 text-sm mt-2">{joinState.error}</p>
-                      )}
+              </thead>
+              <tbody>
+                {events.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="p-3 text-center text-gray-600">
+                      No events found.
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  events.map((event) => (
+                    <tr
+                      key={event.id}
+                      className="border-t border-gray-200 hover:bg-gray-50"
+                    >
+                      <td className="p-3">{event.eventTitle}</td>
+                      <td className="p-3">{event.name}</td>
+                      <td className="p-3">
+                        {new Date(event.dateAndTime).toLocaleString("en-US", {
+                          dateStyle: "medium",
+                          timeStyle: "short",
+                        })}
+                      </td>
+                      <td className="p-3">{event.location}</td>
+                      <td className="p-3 max-w-xs">
+                        <span
+                          className="line-clamp-2"
+                          title={event.description}
+                        >
+                          {truncateDescription(event.description)}
+                        </span>
+                      </td>
+                      <td className="p-3">{event.attendeeCount}</td>
+                      <td className="p-3">
+                        <form action={joinActionFn}>
+                          <input
+                            type="hidden"
+                            name="eventId"
+                            value={event.id}
+                          />
+                          <Button
+                            type="submit"
+                            size="sm"
+                            className="w-full bg-green-500 hover:bg-green-600 text-white"
+                            disabled={
+                              joinedEvents.includes(event.id) ||
+                              (joinState.eventId === event.id &&
+                                joinState.error)
+                            }
+                          >
+                            {joinedEvents.includes(event.id)
+                              ? "Joined"
+                              : "Join Event"}
+                          </Button>
+                        </form>
+                        {joinState.eventId === event.id && joinState.error && (
+                          <p className="text-red-500 text-sm mt-2">
+                            {joinState.error}
+                          </p>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          )}
         </div>
       </section>
     </div>
@@ -298,17 +341,17 @@ const Events: React.FC = () => {
 
 export default Events;
 
-import { createFileRoute } from "@tanstack/react-router"
-import { isLoggedIn } from '@/utils/isLoggedIn';
+import { createFileRoute } from "@tanstack/react-router";
+import { isLoggedIn } from "@/utils/isLoggedIn";
 
 export const Route = createFileRoute("/dashboard/events")({
   component: Events,
-  beforeLoad:async () => {
+  beforeLoad: async () => {
     const res = await isLoggedIn();
     if (!res) {
       throw redirect({
         to: "/login",
       });
     }
-  }
+  },
 });

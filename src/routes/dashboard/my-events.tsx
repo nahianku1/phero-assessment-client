@@ -44,7 +44,6 @@ const MyEvent: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
   const [eventToDelete, setEventToDelete] = useState<string | null>(null);
-  const [now] = useState(new Date('2025-06-30T21:05:00+06:00')); // June 30, 2025, 09:05 PM +06
 
   // Fetch events (mock for now)
   useEffect(() => {
