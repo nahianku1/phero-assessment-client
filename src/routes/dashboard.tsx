@@ -1,21 +1,17 @@
-import React from "react";
-import {
-  Link,
-  Outlet,
-  useRouteContext,
-  createFileRoute,
-} from "@tanstack/react-router";
-import { Button } from "@/components/ui/button"; // shadcn/ui Button
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"; // shadcn/ui Avatar
+import React from 'react';
+import { Link, Outlet, useRouteContext, createFileRoute } from '@tanstack/react-router';
+import { Button } from '@/components/ui/button'; // shadcn/ui Button
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'; // shadcn/ui Avatar
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu"; // shadcn/ui Dropdown
-import { Home, Calendar, Plus, User } from "lucide-react"; // Icons for sidebar
-import { provideRouteContext } from "@/utils/provideRouteContext";
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'; // shadcn/ui Dropdown
+import { Home, Calendar, Plus, User, LogOut } from 'lucide-react'; // Icons for sidebar and dropdown
+import { provideRouteContext } from '@/utils/provideRouteContext';
 
 interface User {
   name: string;
@@ -24,7 +20,7 @@ interface User {
 
 const Dashboard: React.FC = () => {
   const { user }: { user: Record<string, unknown> } = useRouteContext({
-    from: "/dashboard",
+    from: '/dashboard',
   });
 
   return (
@@ -39,7 +35,7 @@ const Dashboard: React.FC = () => {
                   to="/dashboard"
                   className="flex items-center p-3 text-gray-200 hover:bg-gray-700 hover:text-white rounded-xl transition-all duration-300 ease-in-out transform hover:scale-105"
                   activeProps={{
-                    className: "bg-gray-700 text-white rounded-xl",
+                    className: 'bg-gray-700 text-white rounded-xl',
                   }}
                 >
                   <Home className="w-5 h-5 mr-3 group-[.bg-gray-700]:text-white" />
@@ -51,7 +47,7 @@ const Dashboard: React.FC = () => {
                   to="/dashboard/profile"
                   className="flex items-center p-3 text-gray-200 hover:bg-gray-700 hover:text-white rounded-xl transition-all duration-300 ease-in-out transform hover:scale-105"
                   activeProps={{
-                    className: "bg-gray-700 text-white rounded-xl",
+                    className: 'bg-gray-700 text-white rounded-xl',
                   }}
                 >
                   <Calendar className="w-5 h-5 mr-3 group-[.bg-gray-700]:text-white" />
@@ -63,7 +59,7 @@ const Dashboard: React.FC = () => {
                   to="/dashboard/settings"
                   className="flex items-center p-3 text-gray-200 hover:bg-gray-700 hover:text-white rounded-xl transition-all duration-300 ease-in-out transform hover:scale-105"
                   activeProps={{
-                    className: "bg-gray-700 text-white rounded-xl",
+                    className: 'bg-gray-700 text-white rounded-xl',
                   }}
                 >
                   <Plus className="w-5 h-5 mr-3 group-[.bg-gray-700]:text-white" />
@@ -75,7 +71,7 @@ const Dashboard: React.FC = () => {
                   to="/dashboard/my-events"
                   className="flex items-center p-3 text-gray-200 hover:bg-gray-700 hover:text-white rounded-xl transition-all duration-300 ease-in-out transform hover:scale-105"
                   activeProps={{
-                    className: "bg-gray-700 text-white rounded-xl",
+                    className: 'bg-gray-700 text-white rounded-xl',
                   }}
                 >
                   <User className="w-5 h-5 mr-3 group-[.bg-gray-700]:text-white" />
@@ -97,40 +93,37 @@ const Dashboard: React.FC = () => {
               alt="Logo"
               className="h-10 w-10 mr-3 rounded-full shadow-sm"
             />
-            <span className="text-2xl font-semibold text-gray-900">
-              Event Hub
-            </span>
+            <span className="text-2xl font-semibold text-gray-900">Event Hub</span>
           </div>
           <div className="relative">
             {user ? (
               <DropdownMenu>
-                <Avatar className="cursor-pointer ring-2 ring-blue-500 ring-offset-2">
-                  <AvatarImage src={user?.photoURL as string} alt="Profile" />
-                  <AvatarFallback>
-                    {(user?.name as string)?.charAt(0)}
-                  </AvatarFallback>
-                </Avatar>
-                <DropdownMenuContent
-                  align="end"
-                  className="w-48 bg-white shadow-xl rounded-lg"
-                >
+                <DropdownMenuTrigger asChild>
+                  <Avatar className="cursor-pointer ring-2 ring-blue-500 ring-offset-2">
+                    <AvatarImage src={user?.photoURL as string} alt="Profile" />
+                    <AvatarFallback>{(user?.name as string)?.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48 bg-white shadow-xl rounded-lg">
                   <DropdownMenuLabel className="font-semibold text-gray-900">
                     {user?.name as string}
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
-                    onClick={() => console.log("Clicked")}
-                    className="cursor-pointer hover:bg-gray-100"
+                    onClick={() => console.log('Clicked')}
+                    className="cursor-pointer hover:bg-gray-100 flex items-center"
                   >
+                    <LogOut className="w-4 h-4 mr-2" />
                     Logout
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
               <Link to="/login">
-              <Button className="bg-blue-400 hover:bg-blue-500 text-white font-medium rounded-lg px-5 py-2.5 transition-colors duration-200">
-                Sign In
-              </Button></Link>
+                <Button className="bg-blue-400 hover:bg-blue-500 text-white font-medium rounded-lg px-5 py-2.5 transition-colors duration-200">
+                  Sign In
+                </Button>
+              </Link>
             )}
           </div>
         </nav>
@@ -146,7 +139,7 @@ const Dashboard: React.FC = () => {
 
 export default Dashboard;
 
-export const Route = createFileRoute("/dashboard")({
+export const Route = createFileRoute('/dashboard')({
   component: Dashboard,
   beforeLoad: provideRouteContext,
 });
