@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useActionState } from "react";
-import { redirect } from "@tanstack/react-router";
+import { redirect, useRouteContext } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, X, Filter, Search } from "lucide-react";
 
 // Mock data (replace with API fetch)
 interface Event {
-  id: string;
+  _id: string;
   eventTitle: string;
   name: string;
   dateAndTime: string;
   location: string;
   description: string;
   attendeeCount: number;
+  joins: string[]; // Array of user emails who joined
 }
 
 interface JoinState {
@@ -36,9 +37,9 @@ const Events: React.FC = () => {
     "all" | "today" | "currentWeek" | "lastWeek" | "currentMonth" | "lastMonth"
   >("all");
   const [selectedDate, setSelectedDate] = useState<string>("");
-  const [joinedEvents, setJoinedEvents] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
   const [loading, setLoading] = useState(true);
+  const { user } = useRouteContext({ from: "/dashboard/events" });
 
   // Fetch events from API
   useEffect(() => {
@@ -46,8 +47,8 @@ const Events: React.FC = () => {
       setLoading(true);
       const params = new URLSearchParams();
       if (searchQuery) params.append("search", searchQuery);
-      if (selectedDate) params.append("specificDate", selectedDate); // Changed to specificDate
-      if (filter !== "all" && !selectedDate) { // Only apply dateFilter if no specific date is selected
+      if (selectedDate) params.append("specificDate", selectedDate);
+      if (filter !== "all" && !selectedDate) {
         const dateFilterMap = {
           today: "today",
           currentWeek: "currentweek",
@@ -65,7 +66,7 @@ const Events: React.FC = () => {
         );
         if (!response.ok) throw new Error("Failed to fetch events");
         const { data } = await response.json();
-        
+
         const sortedEvents = data.sort((a: Event, b: Event) => {
           const dateA = new Date(a.dateAndTime);
           const dateB = new Date(b.dateAndTime);
@@ -80,7 +81,6 @@ const Events: React.FC = () => {
       }
     };
     fetchEvents();
-    setJoinedEvents(JSON.parse(localStorage.getItem("joinedEvents") || "[]"));
   }, [searchQuery, selectedDate, filter]);
 
   // Join event action
@@ -89,13 +89,8 @@ const Events: React.FC = () => {
     formData: FormData
   ): Promise<JoinState> => {
     const eventId = formData.get("eventId") as string;
-    if (joinedEvents.includes(eventId)) {
-      return {
-        eventId,
-        error: "You have already joined this event.",
-        success: false,
-      };
-    }
+    const userEmail = user?.email || ""; // Get current user's email
+
     try {
       const response = await fetch(
         `http://localhost:3000/events/join/${eventId}`,
@@ -103,22 +98,25 @@ const Events: React.FC = () => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
+          body: JSON.stringify({ userEmail }),
         }
       );
 
       if (response.ok) {
-        setEvents((prev) =>
-          prev.map((event) =>
-            event.id === eventId
-              ? { ...event, attendeeCount: event.attendeeCount + 1 }
-              : event
-          )
+        // Refetch events to get updated data
+        const updatedResponse = await fetch(
+          `http://localhost:3000/events/all-events`,
+          { credentials: "include" }
         );
-        setJoinedEvents((prev) => {
-          const updated = [...prev, eventId];
-          localStorage.setItem("joinedEvents", JSON.stringify(updated));
-          return updated;
-        });
+        if (updatedResponse.ok) {
+          const { data } = await updatedResponse.json();
+          const sortedEvents = data.sort((a: Event, b: Event) => {
+            const dateA = new Date(a.dateAndTime);
+            const dateB = new Date(b.dateAndTime);
+            return dateB.getTime() - dateA.getTime();
+          });
+          setEvents(sortedEvents);
+        }
         return { eventId, error: null, success: true };
       } else {
         const errorData = await response.json();
@@ -157,6 +155,8 @@ const Events: React.FC = () => {
     setSelectedDate("");
     setShowFilters(false);
   };
+
+  const currentUserEmail = user?.email || ""; // Get current user's email
 
   return (
     <div className="p-6 space-y-8 max-w-6xl mx-auto">
@@ -203,7 +203,7 @@ const Events: React.FC = () => {
                 onChange={(e) =>
                   handleFilterChange(setSelectedDate)(e.target.value)
                 }
-                max={new Date("2025-06-30").toISOString().split("T")[0]}
+                max={new Date("2025-07-01").toISOString().split("T")[0]} // Current date
                 className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
@@ -252,86 +252,63 @@ const Events: React.FC = () => {
         <h2 className="text-2xl font-semibold text-gray-900 mb-4">
           All Events
         </h2>
-        <div className="overflow-x-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {loading ? (
             <div className="text-center text-gray-600">Loading events...</div>
+          ) : events.length === 0 ? (
+            <div className="text-center text-gray-600">No events found.</div>
           ) : (
-            <table className="w-full bg-white/90 backdrop-blur-sm rounded-lg shadow-lg border border-gray-200">
-              <thead>
-                <tr className="bg-gray-100 text-gray-700">
-                  <th className="p-3 text-left">Event Title</th>
-                  <th className="p-3 text-left">Posted By</th>
-                  <th className="p-3 text-left">Date and Time</th>
-                  <th className="p-3 text-left">Location</th>
-                  <th className="p-3 text-left">Description</th>
-                  <th className="p-3 text-left">Attendee Count</th>
-                  <th className="p-3 text-left">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {events.length === 0 ? (
-                  <tr>
-                    <td colSpan={7} className="p-3 text-center text-gray-600">
-                      No events found.
-                    </td>
-                  </tr>
-                ) : (
-                  events.map((event) => (
-                    <tr
-                      key={event.id}
-                      className="border-t border-gray-200 hover:bg-gray-50"
+            events.map((event) => (
+              <div
+                key={event._id}
+                className="bg-white shadow-lg rounded-lg p-4 hover:shadow-xl border border-gray-200 flex flex-col h-64" // Fixed height
+              >
+                <div className="flex-1 overflow-y-auto pr-2">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                    {event.eventTitle}
+                  </h3>
+                  <div className="text-sm text-gray-600 mb-1">
+                    Posted by: {event.name}
+                  </div>
+                  <div className="text-sm text-gray-600 mb-1">
+                    {new Date(event.dateAndTime).toLocaleString("en-US", {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    })}
+                  </div>
+                  <div className="text-sm text-gray-600 mb-1">
+                    Location: {event.location}
+                  </div>
+                  <div className="text-sm text-gray-600 mb-2 max-w-xs">
+                    <span className="line-clamp-2" title={event.description}>
+                      {truncateDescription(event.description)}
+                    </span>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    Attendees: {event.attendeeCount}
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <form action={joinActionFn}>
+                    <input type="hidden" name="eventId" value={event._id} />
+                    <Button
+                      type="submit"
+                      size="sm"
+                      className="w-full bg-green-500 hover:bg-green-700 text-white"
+                      disabled={
+                        event.joins.includes(currentUserEmail) ||
+                        (joinState.eventId === event._id && joinState.error)
+                      }
                     >
-                      <td className="p-3">{event.eventTitle}</td>
-                      <td className="p-3">{event.name}</td>
-                      <td className="p-3">
-                        {new Date(event.dateAndTime).toLocaleString("en-US", {
-                          dateStyle: "medium",
-                          timeStyle: "short",
-                        })}
-                      </td>
-                      <td className="p-3">{event.location}</td>
-                      <td className="p-3 max-w-xs">
-                        <span
-                          className="line-clamp-2"
-                          title={event.description}
-                        >
-                          {truncateDescription(event.description)}
-                        </span>
-                      </td>
-                      <td className="p-3">{event.attendeeCount}</td>
-                      <td className="p-3">
-                        <form action={joinActionFn}>
-                          <input
-                            type="hidden"
-                            name="eventId"
-                            value={event.id}
-                          />
-                          <Button
-                            type="submit"
-                            size="sm"
-                            className="w-full bg-green-500 hover:bg-green-600 text-white"
-                            disabled={
-                              joinedEvents.includes(event.id) ||
-                              (joinState.eventId === event.id &&
-                                joinState.error)
-                            }
-                          >
-                            {joinedEvents.includes(event.id)
-                              ? "Joined"
-                              : "Join Event"}
-                          </Button>
-                        </form>
-                        {joinState.eventId === event.id && joinState.error && (
-                          <p className="text-red-500 text-sm mt-2">
-                            {joinState.error}
-                          </p>
-                        )}
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                      {event.joins.includes(currentUserEmail) ? "Joined" : "Join"}
+                    </Button>
+                  </form>
+                  {joinState.eventId === event._id && joinState.error && (
+                    <p className="text-red-500 text-sm mt-2">{joinState.error}</p>
+                  )}
+                </div>
+              </div>
+            ))
           )}
         </div>
       </section>
@@ -343,6 +320,7 @@ export default Events;
 
 import { createFileRoute } from "@tanstack/react-router";
 import { isLoggedIn } from "@/utils/isLoggedIn";
+import { provideRouteContext } from "@/utils/provideRouteContext";
 
 export const Route = createFileRoute("/dashboard/events")({
   component: Events,
@@ -354,4 +332,5 @@ export const Route = createFileRoute("/dashboard/events")({
       });
     }
   },
+  context: provideRouteContext
 });

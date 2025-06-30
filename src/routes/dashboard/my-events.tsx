@@ -120,169 +120,161 @@ const MyEvent: React.FC = () => {
   return (
     <div className="p-6 space-y-8 max-w-6xl mx-auto">
       <h2 className="text-2xl font-semibold text-gray-900 mb-4">My Events</h2>
-      <div className="overflow-x-auto">
-        <table className="w-full bg-white/90 backdrop-blur-sm rounded-lg rounded-tr-lg rounded-br-lg shadow-lg border border-gray-200">
-          <thead>
-            <tr className="bg-gray-100 text-gray-700">
-              <th className="p-3 text-left">Event Title</th>
-              <th className="p-3 text-left">Name</th>
-              <th className="p-3 text-left">Date and Time</th>
-              <th className="p-3 text-left">Location</th>
-              <th className="p-3 text-left">Description</th>
-              <th className="p-3 text-left">Attendee Count</th>
-              <th className="p-3 text-left">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {events.length === 0 ? (
-              <tr>
-                <td colSpan={7} className="p-3 text-center text-gray-600">
-                  No events found.
-                </td>
-              </tr>
-            ) : (
-              events.map((event) => (
-                <tr key={event.id} className="border-t border-gray-200 hover:bg-gray-50">
-                  <td className="p-3">{event.title}</td>
-                  <td className="p-3">{event.postedBy}</td>
-                  <td className="p-3">
-                    {new Date(event.dateTime).toLocaleString('en-US', {
-                      dateStyle: 'medium',
-                      timeStyle: 'short',
-                    })}
-                  </td>
-                  <td className="p-3">{event.location}</td>
-                  <td className="p-3 max-w-xs">
-                    <span className="line-clamp-2" title={event.description}>
-                      {truncateDescription(event.description)}
-                    </span>
-                  </td>
-                  <td className="p-3">{event.attendeeCount}</td>
-                  <td className="p-3">
-                    <div className="flex gap-2">
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button
-                            size="sm"
-                            className="flex items-center gap-2 bg-green-400 hover:bg-green-500 text-white"
-                            onClick={() => setSelectedEvent(event)}
-                          >
-                            <Pencil className="w-4 h-4" />
-                            Update
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {events.length === 0 ? (
+          <div className="text-center text-gray-600">No events found.</div>
+        ) : (
+          events.map((event) => (
+            <div
+              key={event.id}
+              className="bg-white shadow-lg rounded-lg p-4 hover:shadow-xl border border-gray-200 flex flex-col"
+            >
+              <div className="flex-1 overflow-y-auto pr-2 max-h-64">
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                  {event.title}
+                </h3>
+                <div className="text-sm text-gray-600 mb-1">
+                  Posted by: {event.postedBy}
+                </div>
+                <div className="text-sm text-gray-600 mb-1">
+                  {new Date(event.dateTime).toLocaleString('en-US', {
+                    dateStyle: 'medium',
+                    timeStyle: 'short',
+                  })}
+                </div>
+                <div className="text-sm text-gray-600 mb-1">
+                  Location: {event.location}
+                </div>
+                <div className="text-sm text-gray-600 mb-2 max-w-xs">
+                  <span className="line-clamp-2" title={event.description}>
+                    {truncateDescription(event.description)}
+                  </span>
+                </div>
+                <div className="text-sm text-gray-600">
+                  Attendee Count: {event.attendeeCount}
+                </div>
+              </div>
+              <div className="mt-4 flex gap-2">
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      size="sm"
+                      className="flex items-center gap-2 bg-green-400 hover:bg-green-500 text-white"
+                      onClick={() => setSelectedEvent(event)}
+                    >
+                      <Pencil className="w-4 h-4" />
+                      Update
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="bg-white/80 backdrop-blur-sm rounded-lg p-6 max-h-[80vh] overflow-y-auto">
+                    <DialogHeader>
+                      <DialogTitle>Update Event</DialogTitle>
+                    </DialogHeader>
+                    {selectedEvent && selectedEvent.id === event.id && (
+                      <form onSubmit={handleUpdate} className="space-y-6">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Pencil className="w-4 h-4 text-gray-500" />
+                          <label htmlFor="title" className="text-sm font-medium text-gray-700">
+                            Event Title
+                          </label>
+                        </div>
+                        <Input
+                          id="title"
+                          name="title"
+                          defaultValue={selectedEvent.title}
+                          placeholder="Event Title"
+                          className="w-full mb-4 border border-blue-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                        <div className="flex items-center gap-2 mb-2">
+                          <User className="w-4 h-4 text-gray-500" />
+                          <label htmlFor="postedBy" className="text-sm font-medium text-gray-700">
+                            Name
+                          </label>
+                        </div>
+                        <Input
+                          id="postedBy"
+                          name="postedBy"
+                          defaultValue={selectedEvent.postedBy}
+                          placeholder="Name"
+                          className="w-full mb-4 border border-blue-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                        <div className="flex items-center gap-2 mb-2">
+                          <Calendar className="w-4 h-4 text-gray-500" />
+                          <label htmlFor="dateTime" className="text-sm font-medium text-gray-700">
+                            Date and Time
+                          </label>
+                        </div>
+                        <Input
+                          id="dateTime"
+                          name="dateTime"
+                          type="datetime-local"
+                          defaultValue={selectedEvent.dateTime.replace(' ', 'T')}
+                          className="w-full mb-4 border border-blue-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                        <div className="flex items-center gap-2 mb-2">
+                          <MapPin className="w-4 h-4 text-gray-500" />
+                          <label htmlFor="location" className="text-sm font-medium text-gray-700">
+                            Location
+                          </label>
+                        </div>
+                        <Input
+                          id="location"
+                          name="location"
+                          defaultValue={selectedEvent.location}
+                          placeholder="Location"
+                          className="w-full mb-4 border border-blue-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                        <div className="flex items-center gap-2 mb-2">
+                          <FileText className="w-4 h-4 text-gray-500" />
+                          <label htmlFor="description" className="text-sm font-medium text-gray-700">
+                            Description
+                          </label>
+                        </div>
+                        <Textarea
+                          id="description"
+                          name="description"
+                          defaultValue={selectedEvent.description}
+                          placeholder="Description"
+                          className="w-full h-24 mb-4 border border-blue-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                        <div className="flex items-center gap-2 mb-2">
+                          <Users className="w-4 h-4 text-gray-500" />
+                          <label htmlFor="attendeeCount" className="text-sm font-medium text-gray-700">
+                            Attendee Count
+                          </label>
+                        </div>
+                        <Input
+                          id="attendeeCount"
+                          name="attendeeCount"
+                          type="number"
+                          defaultValue={selectedEvent.attendeeCount}
+                          placeholder="Attendee Count"
+                          className="w-full mb-4 border border-blue-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                        <DialogFooter>
+                          <Button type="submit" className="bg-green-400 hover:bg-green-500 text-white">
+                            Save Changes
                           </Button>
-                        </DialogTrigger>
-                        <DialogContent className="bg-white/80 backdrop-blur-sm rounded-lg rounded-tr-lg rounded-br-lg p-6 max-h-[80vh] overflow-y-auto">
-                          <DialogHeader>
-                            <DialogTitle>Update Event</DialogTitle>
-                          </DialogHeader>
-                          {selectedEvent && selectedEvent.id === event.id && (
-                            <form onSubmit={handleUpdate} className="space-y-6">
-                              <div className="flex items-center gap-2 mb-2">
-                                <Pencil className="w-4 h-4 text-gray-500" />
-                                <label htmlFor="title" className="text-sm font-medium text-gray-700">
-                                  Event Title
-                                </label>
-                              </div>
-                              <Input
-                                id="title"
-                                name="title"
-                                defaultValue={selectedEvent.title}
-                                placeholder="Event Title"
-                                className="w-full mb-4 border border-blue-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                              />
-                              <div className="flex items-center gap-2 mb-2">
-                                <User className="w-4 h-4 text-gray-500" />
-                                <label htmlFor="postedBy" className="text-sm font-medium text-gray-700">
-                                  Name
-                                </label>
-                              </div>
-                              <Input
-                                id="postedBy"
-                                name="postedBy"
-                                defaultValue={selectedEvent.postedBy}
-                                placeholder="Name"
-                                className="w-full mb-4 border border-blue-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                              />
-                              <div className="flex items-center gap-2 mb-2">
-                                <Calendar className="w-4 h-4 text-gray-500" />
-                                <label htmlFor="dateTime" className="text-sm font-medium text-gray-700">
-                                  Date and Time
-                                </label>
-                              </div>
-                              <Input
-                                id="dateTime"
-                                name="dateTime"
-                                type="datetime-local"
-                                defaultValue={selectedEvent.dateTime.replace(' ', 'T')}
-                                className="w-full mb-4 border border-blue-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                              />
-                              <div className="flex items-center gap-2 mb-2">
-                                <MapPin className="w-4 h-4 text-gray-500" />
-                                <label htmlFor="location" className="text-sm font-medium text-gray-700">
-                                  Location
-                                </label>
-                              </div>
-                              <Input
-                                id="location"
-                                name="location"
-                                defaultValue={selectedEvent.location}
-                                placeholder="Location"
-                                className="w-full mb-4 border border-blue-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                              />
-                              <div className="flex items-center gap-2 mb-2">
-                                <FileText className="w-4 h-4 text-gray-500" />
-                                <label htmlFor="description" className="text-sm font-medium text-gray-700">
-                                  Description
-                                </label>
-                              </div>
-                              <Textarea
-                                id="description"
-                                name="description"
-                                defaultValue={selectedEvent.description}
-                                placeholder="Description"
-                                className="w-full h-24 mb-4 border border-blue-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                              />
-                              <div className="flex items-center gap-2 mb-2">
-                                <Users className="w-4 h-4 text-gray-500" />
-                                <label htmlFor="attendeeCount" className="text-sm font-medium text-gray-700">
-                                  Attendee Count
-                                </label>
-                              </div>
-                              <Input
-                                id="attendeeCount"
-                                name="attendeeCount"
-                                type="number"
-                                defaultValue={selectedEvent.attendeeCount}
-                                placeholder="Attendee Count"
-                                className="w-full mb-4 border border-blue-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                              />
-                              <DialogFooter>
-                                <Button type="submit" className="bg-green-400 hover:bg-green-500 text-white">
-                                  Save Changes
-                                </Button>
-                              </DialogFooter>
-                            </form>
-                          )}
-                        </DialogContent>
-                      </Dialog>
-                      <Button
-                        size="sm"
-                        className="flex items-center bg-red-500 hover:bg-red-700 h gap-2"
-                        onClick={() => {
-                          setEventToDelete(event.id);
-                          setIsDeleteConfirmOpen(true);
-                        }}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                        Delete
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+                        </DialogFooter>
+                      </form>
+                    )}
+                  </DialogContent>
+                </Dialog>
+                <Button
+                  size="sm"
+                  className="flex items-center gap-2 bg-red-500 hover:bg-red-700"
+                  onClick={() => {
+                    setEventToDelete(event.id);
+                    setIsDeleteConfirmOpen(true);
+                  }}
+                >
+                  <Trash2 className="w-4 h-4" />
+                  Delete
+                </Button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
       {isDeleteConfirmOpen && eventToDelete && (
         <Dialog open={isDeleteConfirmOpen} onOpenChange={setIsDeleteConfirmOpen}>
