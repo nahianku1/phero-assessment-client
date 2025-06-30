@@ -53,6 +53,7 @@ const Dashboard: React.FC = () => {
               <li>
                 <Link
                   to="/dashboard"
+                  activeOptions={{ exact: true }}
                   className="flex items-center p-3 text-gray-200 hover:bg-gray-700 hover:text-white rounded-xl transition-all duration-300 ease-in-out transform hover:scale-105"
                   activeProps={{
                     className: 'bg-gray-700 text-white rounded-xl',
@@ -64,7 +65,7 @@ const Dashboard: React.FC = () => {
               </li>
               <li>
                 <Link
-                  to="/dashboard/profile"
+                  to="/dashboard/events"
                   className="flex items-center p-3 text-gray-200 hover:bg-gray-700 hover:text-white rounded-xl transition-all duration-300 ease-in-out transform hover:scale-105"
                   activeProps={{
                     className: 'bg-gray-700 text-white rounded-xl',
@@ -76,7 +77,7 @@ const Dashboard: React.FC = () => {
               </li>
               <li>
                 <Link
-                  to="/dashboard/settings"
+                  to="/dashboard/add-events"
                   className="flex items-center p-3 text-gray-200 hover:bg-gray-700 hover:text-white rounded-xl transition-all duration-300 ease-in-out transform hover:scale-105"
                   activeProps={{
                     className: 'bg-gray-700 text-white rounded-xl',
@@ -107,14 +108,10 @@ const Dashboard: React.FC = () => {
       <div className="flex-1 flex flex-col">
         {/* Navbar */}
         <nav className="bg-white shadow-md p-4 flex justify-between items-center border-b border-gray-200">
-          <div className="flex items-center">
-            <img
-              src="https://via.placeholder.com/40"
-              alt="Logo"
-              className="h-10 w-10 mr-3 rounded-full shadow-sm"
-            />
-            <span className="text-2xl font-semibold text-gray-900">Event Hub</span>
-          </div>
+            <div className="flex items-center">
+            <Calendar className="h-8 w-8 mr-3 text-blue-500" />
+            <span className="text-2xl font-semibold text-gray-900">Event Management</span>
+            </div>
           <div className="relative">
             {user ? (
               <DropdownMenu>
@@ -149,7 +146,7 @@ const Dashboard: React.FC = () => {
         </nav>
 
         {/* Content Area */}
-        <main className="flex-1 p-6 overflow-auto bg-white/80 backdrop-blur-sm rounded-tl-xl">
+        <main className="flex-1 p-6 overflow-auto bg-blue-50 backdrop-blur-sm">
           <Outlet />
         </main>
       </div>
