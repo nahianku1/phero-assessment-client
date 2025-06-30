@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, Outlet, useRouteContext, createFileRoute } from '@tanstack/react-router';
+import { Link, Outlet, useRouteContext, createFileRoute, useRouter } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button'; // shadcn/ui Button
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'; // shadcn/ui Avatar
 import {
@@ -22,6 +22,26 @@ const Dashboard: React.FC = () => {
   const { user }: { user: Record<string, unknown> } = useRouteContext({
     from: '/dashboard',
   });
+  const router = useRouter(); // Get router for navigation
+
+  // Logout handler to call server endpoint and redirect
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/auth/expire-token', {
+        method: 'POST', // or GET, depending on your API
+        credentials: 'include', // Include cookies in the request
+      });
+
+      if (response.ok) {
+        console.log('Logged out successfully');
+        router.navigate({ to: '/login' }); // Redirect to login page
+      } else {
+        console.error('Logout failed:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
+  };
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -110,7 +130,7 @@ const Dashboard: React.FC = () => {
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
-                    onClick={() => console.log('Clicked')}
+                    onClick={handleLogout}
                     className="cursor-pointer hover:bg-gray-100 flex items-center"
                   >
                     <LogOut className="w-4 h-4 mr-2" />
