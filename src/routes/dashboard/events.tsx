@@ -159,7 +159,7 @@ const Events: React.FC = () => {
   const currentUserEmail = user?.email || ""; // Get current user's email
 
   return (
-    <div className="p-6 space-y-8 max-w-6xl mx-auto">
+    <div className="p-6 space-y-8 max-w-6xl mx-auto min-h-screen flex flex-col">
       {/* Search and Filter */}
       <div className="space-y-4 mb-6">
         <div className="flex flex-col lg:flex-row gap-4">
@@ -248,22 +248,24 @@ const Events: React.FC = () => {
       </div>
 
       {/* Events Section */}
-      <section className="my-8">
-        <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-          All Events
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {loading ? (
-            <div className="text-center text-gray-600">Loading events...</div>
-          ) : events.length === 0 ? (
-            <div className="text-center text-gray-600">No events found.</div>
-          ) : (
-            events.map((event) => (
+      <section className="flex-1">
+        <h2 className="text-2xl font-semibold text-gray-900 mb-4">All Events</h2>
+        {loading ? (
+          <div className="flex-1 flex items-center justify-center text-gray-600">
+            Loading events...
+          </div>
+        ) : events.length === 0 ? (
+          <div className="flex-1 flex items-center justify-center text-gray-600">
+            No events found.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {events.map((event) => (
               <div
                 key={event._id}
                 className="bg-white shadow-lg rounded-lg p-4 hover:shadow-xl border border-gray-200 flex flex-col h-64" // Fixed height
               >
-                <div className="flex-1 overflow-y-auto pr-2">
+                <div className="flex-1"> {/* Removed overflow-y-auto pr-2 */}
                   <h3 className="text-lg font-semibold text-gray-800 mb-2">
                     {event.eventTitle}
                   </h3>
@@ -308,9 +310,9 @@ const Events: React.FC = () => {
                   )}
                 </div>
               </div>
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );

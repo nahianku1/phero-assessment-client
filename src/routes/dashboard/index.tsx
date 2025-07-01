@@ -1,63 +1,79 @@
-import { createFileRoute } from "@tanstack/react-router"
-import React from "react";
+import { createFileRoute, useRouteContext } from "@tanstack/react-router";
+import React, { useState, useEffect } from "react";
 import { Calendar, Users, Clock } from "lucide-react"; // Icons for cards
+import { provideRouteContext } from "@/utils/provideRouteContext";
 
-// Mock data for Your Events
+// Interface for Event
 interface Event {
-  id: string;
-  title: string;
-  dateTime: string;
+  _id: string;
+  eventTitle: string;
+  name: string;
+  dateAndTime: string;
   location: string;
+  description: string;
   attendeeCount: number;
+  userEmail: string;
+  joins: string[]; 
 }
 
-const yourEvents: Event[] = [
-  {
-    id: "1",
-    title: "Tech Meetup",
-    dateTime: "2025-07-10 18:00",
-    location: "Tech Hub, NYC",
-    attendeeCount: 50,
-  },
-  {
-    id: "2",
-    title: "Music Festival",
-    dateTime: "2025-07-15 14:00",
-    location: "Central Park",
-    attendeeCount: 200,
-  },
-  {
-    id: "3",
-    title: "AI Workshop",
-    dateTime: "2025-07-20 10:00",
-    location: "Online",
-    attendeeCount: 75,
-  },
-];
-
-// Mock data for Upcoming Events
-const upcomingEvents: Event[] = [
-  {
-    id: "4",
-    title: "Startup Pitch Night",
-    dateTime: "2025-07-05 19:00",
-    location: "Innovation Center, SF",
-    attendeeCount: 30,
-  },
-  {
-    id: "5",
-    title: "Charity Run",
-    dateTime: "2025-07-08 08:00",
-    location: "Golden Gate Park",
-    attendeeCount: 150,
-  },
-];
-
 const Home: React.FC = () => {
-  // Mock data for metric cards
-  const eventsCount = 120;
-  const eventsJoined = 45;
-  const upcomingEventsCount = 8;
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { user }: { user: Record<string, unknown> } = useRouteContext({
+    from: "/dashboard",
+  });
+
+  // Fetch events from API
+  useEffect(() => {
+    const fetchEvents = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(
+          "http://localhost:3000/events/all-events",
+          {
+            credentials: "include",
+          }
+        );
+        if (!response.ok) throw new Error("Failed to fetch events");
+        const { data } = await response.json();
+        setEvents(data);
+      } catch (error) {
+        console.error("Error fetching events:", error);
+        setError("Failed to load events. Please try again later.");
+        setEvents([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchEvents();
+  }, []);
+
+  // Calculate Top Events (top 3 by attendeeCount)
+  const topEvents = [...events]
+    .sort((a, b) => b.attendeeCount - a.attendeeCount)
+    .slice(0, 3);
+
+  // Calculate Upcoming Events (future dateTime)
+  const now = new Date(); 
+  const upcomingEvents = [...events]
+    .filter((event) => new Date(event.dateAndTime) > now)
+    .sort(
+      (a, b) => new Date(a.dateAndTime).getTime() - new Date(b.dateAndTime).getTime()
+    )
+    .slice(0, 3);
+
+  // Calculate metrics
+  const eventsCount = events.length;
+  const currentUserEmail = user?.email as string | undefined; // Get current user's email
+  const eventsJoined = events.filter(
+    (event) => currentUserEmail && event.joins.includes(currentUserEmail)
+  ).length; // Count events where user's email is in joins array
+  const upcomingEventsCount = [...events]
+    .filter((event) => new Date(event.dateAndTime) > now)
+    .sort(
+      (a, b) => new Date(a.dateAndTime).getTime() - new Date(b.dateAndTime).getTime()
+    ).length;
 
   return (
     <div className="space-y-8 px-3">
@@ -92,35 +108,45 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Your Events Section */}
+      {/* Top Events Section */}
       <section className="my-8">
         <h2 className="text-2xl font-semibold text-gray-900 mb-4">
           Top Events
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {yourEvents.map((event) => (
-            <div
-              key={event.id}
-              className="bg-white/90 backdrop-blur-sm rounded-xl shadow-md border border-gray-200 p-6 space-y-4 hover:bg-gradient-to-br from-white/95 to-gray-100"
-            >
-              <span className="inline-block bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-semibold px-2 py-1 rounded-full">Top Event</span>
-              <h3 className="text-xl font-semibold text-gray-900">
-                {event.title}
-              </h3>
-              <div className="space-y-2">
-                <p className="text-gray-600 flex items-center">
-                  <Calendar className="w-4 h-4 mr-2" />
-                  {event.dateTime}
-                </p>
-                <p className="text-gray-600 flex items-center">
-                  <Users className="w-4 h-4 mr-2" />
-                  {event.attendeeCount} Attendees
-                </p>
-                <p className="text-gray-600">{event.location}</p>
+        {loading ? (
+          <div className="text-center text-gray-600">Loading events...</div>
+        ) : error ? (
+          <div className="text-center text-red-600">{error}</div>
+        ) : topEvents.length === 0 ? (
+          <div className="text-center text-gray-600">No top events found.</div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {topEvents.map((event) => (
+              <div
+                key={event._id}
+                className="bg-white/90 backdrop-blur-sm rounded-xl shadow-md border border-gray-200 p-6 space-y-4 hover:bg-gradient-to-br from-white/95 to-gray-100"
+              >
+                <span className="inline-block bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
+                  Top Event
+                </span>
+                <h3 className="text-xl font-semibold text-gray-900">
+                  {event.eventTitle}
+                </h3>
+                <div className="space-y-2">
+                  <p className="text-gray-600 flex items-center">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    {event.dateAndTime}
+                  </p>
+                  <p className="text-gray-600 flex items-center">
+                    <Users className="w-4 h-4 mr-2" />
+                    {event.attendeeCount} Attendees
+                  </p>
+                  <p className="text-gray-600">{event.location}</p>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Upcoming Events Section */}
@@ -128,30 +154,42 @@ const Home: React.FC = () => {
         <h2 className="text-2xl font-semibold text-gray-900 mb-4">
           Upcoming Events
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {upcomingEvents.map((event) => (
-            <div
-              key={event.id}
-              className="bg-white/90 backdrop-blur-sm rounded-xl shadow-md border border-purple-300 p-6 space-y-4 hover:bg-gradient-to-br from-white/95 to-gray-100"
-            >
-              <span className="inline-block bg-gradient-to-r from-purple-400 to-indigo-500 text-white text-xs font-semibold px-2 py-1 rounded-full">Upcoming</span>
-              <h3 className="text-xl font-semibold text-gray-900">
-                {event.title}
-              </h3>
-              <div className="space-y-2">
-                <p className="text-gray-600 flex items-center">
-                  <Calendar className="w-4 h-4 mr-2" />
-                  {event.dateTime}
-                </p>
-                <p className="text-gray-600 flex items-center">
-                  <Users className="w-4 h-4 mr-2" />
-                  {event.attendeeCount} Attendees
-                </p>
-                <p className="text-gray-600">{event.location}</p>
+        {loading ? (
+          <div className="text-center text-gray-600">Loading events...</div>
+        ) : error ? (
+          <div className="text-center text-red-600">{error}</div>
+        ) : upcomingEvents.length === 0 ? (
+          <div className="text-center text-gray-600">
+            No upcoming events found.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {upcomingEvents.map((event) => (
+              <div
+                key={event._id}
+                className="bg-white/90 backdrop-blur-sm rounded-xl shadow-md border border-purple-300 p-6 space-y-4 hover:bg-gradient-to-br from-white/95 to-gray-100"
+              >
+                <span className="inline-block bg-gradient-to-r from-purple-400 to-indigo-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
+                  Upcoming
+                </span>
+                <h3 className="text-xl font-semibold text-gray-900">
+                  {event.eventTitle}
+                </h3>
+                <div className="space-y-2">
+                  <p className="text-gray-600 flex items-center">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    {event.dateAndTime}
+                  </p>
+                  <p className="text-gray-600 flex items-center">
+                    <Users className="w-4 h-4 mr-2" />
+                    {event.attendeeCount} Attendees
+                  </p>
+                  <p className="text-gray-600">{event.location}</p>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );
@@ -161,4 +199,5 @@ export default Home;
 
 export const Route = createFileRoute("/dashboard/")({
   component: Home,
+  beforeLoad: provideRouteContext,
 });
