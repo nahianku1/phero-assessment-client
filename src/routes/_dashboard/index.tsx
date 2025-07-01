@@ -21,33 +21,76 @@ const Home: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { user }: { user: Record<string, unknown> } = useRouteContext({
-    from: "/dashboard",
+    from: "/_dashboard",
   });
 
-  // Fetch events from API
+  // Mock data for non-logged-in users
+  const mockEvents: Event[] = [
+    {
+      _id: "1",
+      eventTitle: "Mock Tech Conference",
+      name: "John Doe",
+      dateAndTime: "2025-07-02T10:00:00+06:00",
+      location: "Online",
+      description: "A great tech event with workshops.",
+      attendeeCount: 150,
+      userEmail: "john@example.com",
+      joins: [],
+    },
+    {
+      _id: "2",
+      eventTitle: "Mock Music Festival",
+      name: "Jane Smith",
+      dateAndTime: "2025-07-03T14:00:00+06:00",
+      location: "City Park",
+      description: "Enjoy live music and food stalls.",
+      attendeeCount: 200,
+      userEmail: "jane@example.com",
+      joins: [],
+    },
+    {
+      _id: "3",
+      eventTitle: "Mock Coding Bootcamp",
+      name: "Alex Brown",
+      dateAndTime: "2025-07-04T09:00:00+06:00",
+      location: "Tech Hub",
+      description: "Learn coding skills in a day.",
+      attendeeCount: 100,
+      userEmail: "alex@example.com",
+      joins: [],
+    },
+  ];
+
+  // Fetch events from API or use mock data
   useEffect(() => {
     const fetchEvents = async () => {
       setLoading(true);
       try {
-        const response = await fetch(
-          "http://localhost:3000/events/all-events",
-          {
-            credentials: "include",
-          }
-        );
-        if (!response.ok) throw new Error("Failed to fetch events");
-        const { data } = await response.json();
-        setEvents(data);
+        if (user?.email) {
+          // Logged-in user, fetch from API
+          const response = await fetch(
+            "https://event-manager-server-vf31.onrender.com/events/all-events",
+            {
+              credentials: "include",
+            }
+          );
+          if (!response.ok) throw new Error("Failed to fetch events");
+          const { data } = await response.json();
+          setEvents(data);
+        } else {
+          // Not logged in, use mock data
+          setEvents(mockEvents);
+        }
       } catch (error) {
         console.error("Error fetching events:", error);
         setError("Failed to load events. Please try again later.");
-        setEvents([]);
+        setEvents(user?.email ? [] : mockEvents); // Use mock data on error if not logged in
       } finally {
         setLoading(false);
       }
     };
     fetchEvents();
-  }, []);
+  }, [user?.email]);
 
   // Calculate Top Events (top 3 by attendeeCount)
   const topEvents = [...events]
@@ -55,7 +98,7 @@ const Home: React.FC = () => {
     .slice(0, 3);
 
   // Calculate Upcoming Events (future dateTime)
-  const now = new Date(); 
+  const now = new Date("2025-07-01T14:47:00+06:00"); // Current date and time
   const upcomingEvents = [...events]
     .filter((event) => new Date(event.dateAndTime) > now)
     .sort(
@@ -197,7 +240,7 @@ const Home: React.FC = () => {
 
 export default Home;
 
-export const Route = createFileRoute("/dashboard/")({
+export const Route = createFileRoute("/_dashboard/")({
   component: Home,
   beforeLoad: provideRouteContext,
 });

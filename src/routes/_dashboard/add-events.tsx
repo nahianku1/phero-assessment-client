@@ -44,7 +44,7 @@ const AddEvent: React.FC = () => {
       }
 
       const response = await fetch(
-        "http://localhost:3000/events/create-event",
+        "https://event-manager-server-vf31.onrender.com/events/create-event",
         {
           method: "POST",
           headers: {
@@ -207,7 +207,7 @@ export default AddEvent;
 import { createFileRoute } from "@tanstack/react-router";
 import { isLoggedIn } from "@/utils/isLoggedIn";
 
-export const Route = createFileRoute("/dashboard/add-events")({
+export const Route = createFileRoute("/_dashboard/add-events")({
   component: AddEvent,
   beforeLoad: async () => {
     const res = await isLoggedIn();

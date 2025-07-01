@@ -27,7 +27,7 @@ const loginAction = async (
   const password = formData.get("password") as string;
 
   try {
-    const response = await fetch("http://localhost:3000/auth/login", {
+    const response = await fetch("https://event-manager-server-vf31.onrender.com/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -64,7 +64,7 @@ const LoginPage: React.FC = () => {
   useEffect(() => {
     if (state.success) {
       navigate({
-        to: "/dashboard",
+        to: "/",
       });
     }
   }, [state.success]);

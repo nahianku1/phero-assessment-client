@@ -54,7 +54,7 @@ const MyEvent: React.FC = () => {
     const fetchEvents = async () => {
       setLoading(true);
       try {
-        const response = await fetch("http://localhost:3000/events/my-events", {
+        const response = await fetch("https://event-manager-server-vf31.onrender.com/events/my-events", {
           credentials: "include",
         });
         if (!response.ok) throw new Error("Failed to fetch events");
@@ -115,7 +115,7 @@ const MyEvent: React.FC = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/events/update-event/${selectedEvent._id}`,
+        `https://event-manager-server-vf31.onrender.com/events/update-event/${selectedEvent._id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -141,7 +141,7 @@ const MyEvent: React.FC = () => {
   const handleDelete = async (eventId: string) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/events/delete-event/${eventId}`,
+        `https://event-manager-server-vf31.onrender.com/events/delete-event/${eventId}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -405,7 +405,7 @@ const MyEvent: React.FC = () => {
 
 export default MyEvent;
 
-export const Route = createFileRoute("/dashboard/my-events")({
+export const Route = createFileRoute("/_dashboard/my-events")({
   component: MyEvent,
   beforeLoad: async () => {
     const res = await isLoggedIn();

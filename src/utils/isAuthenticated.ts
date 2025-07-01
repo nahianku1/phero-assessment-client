@@ -1,5 +1,5 @@
 export const isAuthenticated = async () => {
-  const response = await fetch("http://localhost:3000/auth/validate-token", {
+  const response = await fetch("https://event-manager-server-vf31.onrender.com/auth/validate-token", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

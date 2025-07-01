@@ -26,13 +26,13 @@ interface User {
 
 const Dashboard: React.FC = () => {
   const { user }: { user: Record<string, unknown> } = useRouteContext({
-    from: '/dashboard',
+    from: '/_dashboard',
   });
   const router = useRouter();
 
   const handleLogout = async () => {
     try {
-      const response = await fetch('http://localhost:3000/auth/expire-token', {
+      const response = await fetch('https://event-manager-server-vf31.onrender.com/auth/expire-token', {
         method: 'POST',
         credentials: 'include',
       });
@@ -56,10 +56,10 @@ const Dashboard: React.FC = () => {
           <nav className="mt-8">
             <ul className="space-y-4">
               {[
-                { to: '/dashboard', icon: Home, label: 'Home' },
-                { to: '/dashboard/events', icon: Calendar, label: 'Events' },
-                { to: '/dashboard/add-events', icon: Plus, label: 'Add Event' },
-                { to: '/dashboard/my-events', icon: User, label: 'My Events' },
+                { to: '/', icon: Home, label: 'Home' },
+                { to: '/events', icon: Calendar, label: 'Events' },
+                { to: '/add-events', icon: Plus, label: 'Add Event' },
+                { to: '/my-events', icon: User, label: 'My Events' },
               ].map(({ to, icon: Icon, label }) => (
                 <li key={to}>
                   <Link
@@ -166,7 +166,7 @@ const Dashboard: React.FC = () => {
 
 export default Dashboard;
 
-export const Route = createFileRoute('/dashboard')({
+export const Route = createFileRoute('/_dashboard')({
   component: Dashboard,
   beforeLoad: provideRouteContext,
 });

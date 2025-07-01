@@ -39,7 +39,7 @@ const Events: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [showFilters, setShowFilters] = useState(false);
   const [loading, setLoading] = useState(true);
-  const { user } = useRouteContext({ from: "/dashboard/events" });
+  const { user } = useRouteContext({ from: "/_dashboard/events" });
 
   // Fetch events from API
   useEffect(() => {
@@ -61,7 +61,7 @@ const Events: React.FC = () => {
 
       try {
         const response = await fetch(
-          `http://localhost:3000/events/all-events?${params.toString()}`,
+          `https://event-manager-server-vf31.onrender.com/events/all-events?${params.toString()}`,
           { credentials: "include" }
         );
         if (!response.ok) throw new Error("Failed to fetch events");
@@ -93,7 +93,7 @@ const Events: React.FC = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/events/join/${eventId}`,
+        `https://event-manager-server-vf31.onrender.com/events/join/${eventId}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -105,7 +105,7 @@ const Events: React.FC = () => {
       if (response.ok) {
         // Refetch events to get updated data
         const updatedResponse = await fetch(
-          `http://localhost:3000/events/all-events`,
+          `https://event-manager-server-vf31.onrender.com/events/all-events`,
           { credentials: "include" }
         );
         if (updatedResponse.ok) {
@@ -324,7 +324,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { isLoggedIn } from "@/utils/isLoggedIn";
 import { provideRouteContext } from "@/utils/provideRouteContext";
 
-export const Route = createFileRoute("/dashboard/events")({
+export const Route = createFileRoute("/_dashboard/events")({
   component: Events,
   beforeLoad: async () => {
     const res = await isLoggedIn();
