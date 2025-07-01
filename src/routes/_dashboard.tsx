@@ -35,7 +35,7 @@ const Dashboard: React.FC = () => {
       const response = await fetch('https://event-manager-server-vf31.onrender.com/auth/expire-token', {
         method: 'POST',
         credentials: 'include',
-        mode:'cors',
+        mode:'no-cors', // Ensure CORS is handled correctly
       });
 
       if (response.ok) {

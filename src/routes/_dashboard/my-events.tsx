@@ -54,10 +54,13 @@ const MyEvent: React.FC = () => {
     const fetchEvents = async () => {
       setLoading(true);
       try {
-        const response = await fetch("https://event-manager-server-vf31.onrender.com/events/my-events", {
-          credentials: "include",
-          mode: "cors", // Ensure CORS is handled correctly
-        });
+        const response = await fetch(
+          "https://event-manager-server-vf31.onrender.com/events/my-events",
+          {
+            credentials: "include",
+            mode: "no-cors", // Ensure CORS is handled correctly
+          }
+        );
         if (!response.ok) throw new Error("Failed to fetch events");
         const { data } = await response.json();
         const sortedEvents = data.sort((a: Event, b: Event) => {
@@ -82,7 +85,9 @@ const MyEvent: React.FC = () => {
       setFormData({
         eventTitle: selectedEvent.eventTitle,
         name: selectedEvent.name,
-        dateTime: new Date(selectedEvent.dateAndTime).toISOString().slice(0, 16), // Format for datetime-local
+        dateTime: new Date(selectedEvent.dateAndTime)
+          .toISOString()
+          .slice(0, 16), // Format for datetime-local
         location: selectedEvent.location,
         description: selectedEvent.description,
         attendeeCount: selectedEvent.attendeeCount,
@@ -122,7 +127,7 @@ const MyEvent: React.FC = () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(updatedEvent),
           credentials: "include",
-          mode: "cors", // Ensure CORS is handled correctly
+           mode: "no-cors", // Ensure CORS is handled correctly
         }
       );
 
@@ -147,7 +152,7 @@ const MyEvent: React.FC = () => {
         {
           method: "DELETE",
           credentials: "include",
-          mode: "cors", // Ensure CORS is handled correctly
+           mode: "no-cors", // Ensure CORS is handled correctly
         }
       );
 

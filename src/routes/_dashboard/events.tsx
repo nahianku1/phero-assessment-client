@@ -62,7 +62,7 @@ const Events: React.FC = () => {
       try {
         const response = await fetch(
           `https://event-manager-server-vf31.onrender.com/events/all-events?${params.toString()}`,
-          { credentials: "include", mode: "cors" } // Ensure CORS is handled correctly
+          { credentials: "include", mode: "no-cors" } // Ensure CORS is handled correctly
         );
         if (!response.ok) throw new Error("Failed to fetch events");
         const { data } = await response.json();
@@ -99,7 +99,7 @@ const Events: React.FC = () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ userEmail }),
           credentials: "include",
-          mode: "cors",
+           mode: "no-cors",
         }
       );
 
@@ -107,7 +107,7 @@ const Events: React.FC = () => {
         // Refetch events to get updated data
         const updatedResponse = await fetch(
           `https://event-manager-server-vf31.onrender.com/events/all-events`,
-          { credentials: "include" , mode: "cors" } // Ensure CORS is handled correctly
+          { credentials: "include" ,   mode: "no-cors"} // Ensure CORS is handled correctly
         );
         if (updatedResponse.ok) {
           const { data } = await updatedResponse.json();
