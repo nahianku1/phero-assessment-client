@@ -28,7 +28,7 @@ const loginAction = async (
 
   try {
     const response = await fetch(
-      "http://localhost:3000/auth/login",
+      "https://event-manager-server-vf31.onrender.com/auth/login",
       {
         method: "POST",
         headers: {
@@ -36,7 +36,7 @@ const loginAction = async (
         },
         body: JSON.stringify({ email, password }),
         credentials: "include", 
-        
+
       }
     );
 

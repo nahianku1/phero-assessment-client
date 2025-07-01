@@ -69,7 +69,7 @@ const Home: React.FC = () => {
         if (user?.email) {
           // Logged-in user, fetch from API
           const response = await fetch(
-            "http://localhost:3000/events/all-events",
+            "https://event-manager-server-vf31.onrender.com/events/all-events",
             {
               credentials: "include",
               

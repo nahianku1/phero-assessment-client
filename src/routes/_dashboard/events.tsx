@@ -61,7 +61,7 @@ const Events: React.FC = () => {
 
       try {
         const response = await fetch(
-          `http://localhost:3000/events/all-events?${params.toString()}`,
+          `https://event-manager-server-vf31.onrender.com/events/all-events?${params.toString()}`,
           { credentials: "include" } // Ensure CORS is handled correctly
         );
         if (!response.ok) throw new Error("Failed to fetch events");
@@ -93,7 +93,7 @@ const Events: React.FC = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/events/join/${eventId}`,
+        `https://event-manager-server-vf31.onrender.com/events/join/${eventId}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -105,7 +105,7 @@ const Events: React.FC = () => {
       if (response.ok) {
         // Refetch events to get updated data
         const updatedResponse = await fetch(
-          `http://localhost:3000/events/all-events`,
+          `https://event-manager-server-vf31.onrender.com/events/all-events`,
           { credentials: "include" } // Ensure CORS is handled correctly
         );
         if (updatedResponse.ok) {

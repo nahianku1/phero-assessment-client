@@ -30,7 +30,7 @@ const signupAction = async (
 
   try {
     const response = await fetch(
-      "http://localhost:3000/users/create-user",
+      "https://event-manager-server-vf31.onrender.com/users/create-user",
       {
         method: "POST",
         headers: {
