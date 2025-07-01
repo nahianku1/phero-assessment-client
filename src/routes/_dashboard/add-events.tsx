@@ -52,6 +52,7 @@ const AddEvent: React.FC = () => {
           },
           body: JSON.stringify(eventData),
           credentials: "include", // Include cookies for authentication
+          mode: "cors", // Ensure CORS is handled correctly
         }
       );
 

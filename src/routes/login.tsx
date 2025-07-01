@@ -27,14 +27,16 @@ const loginAction = async (
   const password = formData.get("password") as string;
 
   try {
-    const response = await fetch("https://event-manager-server-vf31.onrender.com/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-      credentials: "include",
-    });
+    const response = await fetch(
+      "https://event-manager-server-vf31.onrender.com/auth/login",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      }
+    );
 
     if (!response.ok) {
       const res = await response.json();

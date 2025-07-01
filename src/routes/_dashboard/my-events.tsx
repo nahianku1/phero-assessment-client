@@ -56,6 +56,7 @@ const MyEvent: React.FC = () => {
       try {
         const response = await fetch("https://event-manager-server-vf31.onrender.com/events/my-events", {
           credentials: "include",
+          mode: "cors", // Ensure CORS is handled correctly
         });
         if (!response.ok) throw new Error("Failed to fetch events");
         const { data } = await response.json();
@@ -121,6 +122,7 @@ const MyEvent: React.FC = () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(updatedEvent),
           credentials: "include",
+          mode: "cors", // Ensure CORS is handled correctly
         }
       );
 
@@ -145,6 +147,7 @@ const MyEvent: React.FC = () => {
         {
           method: "DELETE",
           credentials: "include",
+          mode: "cors", // Ensure CORS is handled correctly
         }
       );
 

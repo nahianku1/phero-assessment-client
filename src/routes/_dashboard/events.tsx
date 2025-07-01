@@ -62,7 +62,7 @@ const Events: React.FC = () => {
       try {
         const response = await fetch(
           `https://event-manager-server-vf31.onrender.com/events/all-events?${params.toString()}`,
-          { credentials: "include" }
+          { credentials: "include", mode: "cors" } // Ensure CORS is handled correctly
         );
         if (!response.ok) throw new Error("Failed to fetch events");
         const { data } = await response.json();
@@ -97,8 +97,9 @@ const Events: React.FC = () => {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          credentials: "include",
           body: JSON.stringify({ userEmail }),
+          credentials: "include",
+          mode: "cors",
         }
       );
 
@@ -106,7 +107,7 @@ const Events: React.FC = () => {
         // Refetch events to get updated data
         const updatedResponse = await fetch(
           `https://event-manager-server-vf31.onrender.com/events/all-events`,
-          { credentials: "include" }
+          { credentials: "include" , mode: "cors" } // Ensure CORS is handled correctly
         );
         if (updatedResponse.ok) {
           const { data } = await updatedResponse.json();
@@ -222,7 +223,7 @@ const Events: React.FC = () => {
                       | "lastWeek"
                       | "currentMonth"
                       | "lastMonth"
-                    )
+                  )
                 }
                 className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
               >
@@ -249,7 +250,9 @@ const Events: React.FC = () => {
 
       {/* Events Section */}
       <section className="flex-1">
-        <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-2 sm:mb-4">All Events</h2>
+        <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-2 sm:mb-4">
+          All Events
+        </h2>
         {loading ? (
           <div className="flex-1 flex items-center justify-center text-gray-600">
             Loading events...
@@ -265,7 +268,9 @@ const Events: React.FC = () => {
                 key={event._id}
                 className="bg-white shadow-lg rounded-lg p-2 sm:p-4 hover:shadow-xl border border-gray-200 flex flex-col h-64" // Reduced padding on mobile
               >
-                <div className="flex-1 overflow-y-auto pr-1 sm:pr-2"> {/* Added scroll for overflow */}
+                <div className="flex-1 overflow-y-auto pr-1 sm:pr-2">
+                  {" "}
+                  {/* Added scroll for overflow */}
                   <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-1 sm:mb-2">
                     {event.eventTitle}
                   </h3>
@@ -302,11 +307,15 @@ const Events: React.FC = () => {
                         (joinState.eventId === event._id && joinState.error)
                       }
                     >
-                      {event.joins.includes(currentUserEmail) ? "Joined" : "Join"}
+                      {event.joins.includes(currentUserEmail)
+                        ? "Joined"
+                        : "Join"}
                     </Button>
                   </form>
                   {joinState.eventId === event._id && joinState.error && (
-                    <p className="text-red-500 text-xs sm:text-sm mt-1">{joinState.error}</p>
+                    <p className="text-red-500 text-xs sm:text-sm mt-1">
+                      {joinState.error}
+                    </p>
                   )}
                 </div>
               </div>
@@ -334,5 +343,5 @@ export const Route = createFileRoute("/_dashboard/events")({
       });
     }
   },
-  context: provideRouteContext
+  context: provideRouteContext,
 });

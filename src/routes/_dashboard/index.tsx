@@ -72,6 +72,7 @@ const Home: React.FC = () => {
             "https://event-manager-server-vf31.onrender.com/events/all-events",
             {
               credentials: "include",
+              mode: "cors", // Ensure CORS is handled correctly
             }
           );
           if (!response.ok) throw new Error("Failed to fetch events");

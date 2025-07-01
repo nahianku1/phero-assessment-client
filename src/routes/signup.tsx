@@ -29,13 +29,16 @@ const signupAction = async (
   const photoURL = formData.get("photoURL") as string;
 
   try {
-    const response = await fetch("https://event-manager-server-vf31.onrender.com/users/create-user", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ name, email, password, photoURL }),
-    });
+    const response = await fetch(
+      "https://event-manager-server-vf31.onrender.com/users/create-user",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, password, photoURL }),
+      }
+    );
 
     if (!response.ok) {
       const res = await response.json();

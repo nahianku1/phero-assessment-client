@@ -5,6 +5,7 @@ export const isAuthenticated = async () => {
       "Content-Type": "application/json",
     },
     credentials: "include",
+    mode: "cors", // Ensure CORS is handled correctly
   });
   const data = await response.json();
   return data;
