@@ -4,7 +4,7 @@ This is the client-side project for Event Management System.
 
 ## 🚀 Live Site
 
-[View the Live Site](https://your-live-site-link.com)
+[View the Live Site](https://event-manager-phero.netlify.app/)
 
 ## 📦 Getting Started
 
@@ -23,7 +23,7 @@ This is the client-side project for Event Management System.
   ```bash
   npm run dev
   ```
-  The app will be available at `http://localhost:5173` (or as specified in your config).
+  The app will be available at `https://event-manager-phero.netlify.app/` (or as specified in your config).
 
 ## 🛠️ Technologies Used
 
