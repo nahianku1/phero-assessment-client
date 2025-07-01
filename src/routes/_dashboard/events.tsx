@@ -100,7 +100,7 @@ const Events: React.FC = () => {
           body: JSON.stringify({ userEmail }),
           credentials: "include",
         }
-      );
+      )
 
       if (response.ok) {
         // Refetch events to get updated data
