@@ -56,10 +56,10 @@ const Dashboard: React.FC = () => {
           <nav className="mt-8">
             <ul className="space-y-4">
               {[
-                { to: '/_dashboard', icon: Home, label: 'Home' }, // Adjusted to match parent route
-                { to: '/_dashboard/events', icon: Calendar, label: 'Events' },
-                { to: '/_dashboard/add-events', icon: Plus, label: 'Add Event' },
-                { to: '/_dashboard/my-events', icon: User, label: 'My Events' },
+                { to: '/', icon: Home, label: 'Home' }, // Adjusted to match parent route
+                { to: '/events', icon: Calendar, label: 'Events' },
+                { to: '/add-events', icon: Plus, label: 'Add Event' },
+                { to: '/my-events', icon: User, label: 'My Events' },
               ].map(({ to, icon: Icon, label }) => (
                 <li key={to}>
                   <Link
@@ -136,10 +136,10 @@ const Dashboard: React.FC = () => {
           <nav className="mt-8">
             <ul className="space-y-4">
               {[
-                { to: '/_dashboard', icon: Home, label: 'Home' },
-                { to: '/_dashboard/events', icon: Calendar, label: 'Events' },
-                { to: '/_dashboard/add-events', icon: Plus, label: 'Add Event' },
-                { to: '/_dashboard/my-events', icon: User, label: 'My Events' },
+                { to: '/', icon: Home, label: 'Home' },
+                { to: '/events', icon: Calendar, label: 'Events' },
+                { to: '/add-events', icon: Plus, label: 'Add Event' },
+                { to: '/my-events', icon: User, label: 'My Events' },
               ].map(({ to, icon: Icon, label }) => (
                 <li key={to}>
                   <SheetClose asChild>
