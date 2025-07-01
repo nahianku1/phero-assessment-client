@@ -56,10 +56,10 @@ const Dashboard: React.FC = () => {
           <nav className="mt-8">
             <ul className="space-y-4">
               {[
-                { to: '/', icon: Home, label: 'Home' },
-                { to: '/events', icon: Calendar, label: 'Events' },
-                { to: '/add-events', icon: Plus, label: 'Add Event' },
-                { to: '/my-events', icon: User, label: 'My Events' },
+                { to: '/_dashboard', icon: Home, label: 'Home' }, // Adjusted to match parent route
+                { to: '/_dashboard/events', icon: Calendar, label: 'Events' },
+                { to: '/_dashboard/add-events', icon: Plus, label: 'Add Event' },
+                { to: '/_dashboard/my-events', icon: User, label: 'My Events' },
               ].map(({ to, icon: Icon, label }) => (
                 <li key={to}>
                   <Link
@@ -84,11 +84,10 @@ const Dashboard: React.FC = () => {
           {/* Navbar */}
           <nav className="bg-white shadow-md p-4 flex justify-between items-center border-b border-gray-200">
             <div className="flex items-center">
-              <img src="/eicon.webp" className='w-10 h-10 md:w-14 md:h-14'  alt="" />
+              <img src="/eicon.webp" className="w-10 h-10 md:w-14 md:h-14" alt="" />
               <span className="text-lg md:text-2xl font-semibold text-gray-900">Event Management</span>
             </div>
             <div className="relative flex items-center space-x-4">
-              {/* ✅ Move the trigger inside the Sheet */}
               <SheetTrigger asChild>
                 <button className="md:hidden">
                   <Menu className="h-6 w-6 text-gray-900" />
@@ -137,10 +136,10 @@ const Dashboard: React.FC = () => {
           <nav className="mt-8">
             <ul className="space-y-4">
               {[
-                { to: '/dashboard', icon: Home, label: 'Home' },
-                { to: '/dashboard/events', icon: Calendar, label: 'Events' },
-                { to: '/dashboard/add-events', icon: Plus, label: 'Add Event' },
-                { to: '/dashboard/my-events', icon: User, label: 'My Events' },
+                { to: '/_dashboard', icon: Home, label: 'Home' },
+                { to: '/_dashboard/events', icon: Calendar, label: 'Events' },
+                { to: '/_dashboard/add-events', icon: Plus, label: 'Add Event' },
+                { to: '/_dashboard/my-events', icon: User, label: 'My Events' },
               ].map(({ to, icon: Icon, label }) => (
                 <li key={to}>
                   <SheetClose asChild>
