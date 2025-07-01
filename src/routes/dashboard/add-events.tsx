@@ -13,8 +13,6 @@ interface FormState {
 }
 
 const AddEvent: React.FC = () => {
-  // const router = useRouter();
-
   // Form submission action
   const formAction = async (
     _prevState: FormState,
@@ -77,14 +75,14 @@ const AddEvent: React.FC = () => {
   });
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg my-8">
-      <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+    <div className="max-w-md sm:max-w-lg md:max-w-2xl mx-auto p-4 sm:p-6 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg my-4 sm:my-8">
+      <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-4 sm:mb-6">
         Add New Event
       </h2>
-      <form action={submitAction} className="space-y-6">
+      <form action={submitAction} className="space-y-3 sm:space-y-6">
         {/* Event Title */}
-        <div className="space-y-2">
-          <Label htmlFor="title" className="flex items-center text-gray-700">
+        <div className="space-y-1 sm:space-y-2">
+          <Label htmlFor="title" className="flex items-center text-gray-700 text-sm sm:text-base">
             <Calendar className="w-4 h-4 mr-2" />
             Event Title
           </Label>
@@ -94,13 +92,13 @@ const AddEvent: React.FC = () => {
             type="text"
             required
             placeholder="Enter event title"
-            className="border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+            className="border-gray-300 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
           />
         </div>
 
         {/* Posted By */}
-        <div className="space-y-2">
-          <Label htmlFor="postedBy" className="flex items-center text-gray-700">
+        <div className="space-y-1 sm:space-y-2">
+          <Label htmlFor="postedBy" className="flex items-center text-gray-700 text-sm sm:text-base">
             <User className="w-4 h-4 mr-2" />
             Posted By
           </Label>
@@ -110,13 +108,13 @@ const AddEvent: React.FC = () => {
             type="text"
             required
             placeholder="Enter your name"
-            className="border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+            className="border-gray-300 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
           />
         </div>
 
         {/* Date and Time */}
-        <div className="space-y-2">
-          <Label htmlFor="dateTime" className="flex items-center text-gray-700">
+        <div className="space-y-1 sm:space-y-2">
+          <Label htmlFor="dateTime" className="flex items-center text-gray-700 text-sm sm:text-base">
             <Calendar className="w-4 h-4 mr-2" />
             Date and Time
           </Label>
@@ -125,13 +123,13 @@ const AddEvent: React.FC = () => {
             name="dateTime"
             type="datetime-local"
             required
-            className="border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+            className="border-gray-300 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
           />
         </div>
 
         {/* Location */}
-        <div className="space-y-2">
-          <Label htmlFor="location" className="flex items-center text-gray-700">
+        <div className="space-y-1 sm:space-y-2">
+          <Label htmlFor="location" className="flex items-center text-gray-700 text-sm sm:text-base">
             <MapPin className="w-4 h-4 mr-2" />
             Location
           </Label>
@@ -141,16 +139,13 @@ const AddEvent: React.FC = () => {
             type="text"
             required
             placeholder="Enter event location"
-            className="border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+            className="border-gray-300 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
           />
         </div>
 
         {/* Description */}
-        <div className="space-y-2">
-          <Label
-            htmlFor="description"
-            className="flex items-center text-gray-700"
-          >
+        <div className="space-y-1 sm:space-y-2">
+          <Label htmlFor="description" className="flex items-center text-gray-700 text-sm sm:text-base">
             <FileText className="w-4 h-4 mr-2" />
             Description
           </Label>
@@ -158,16 +153,13 @@ const AddEvent: React.FC = () => {
             id="description"
             name="description"
             placeholder="Enter event description"
-            className="border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+            className="border-gray-300 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
           />
         </div>
 
         {/* Attendee Count */}
-        <div className="space-y-2">
-          <Label
-            htmlFor="attendeeCount"
-            className="flex items-center text-gray-700"
-          >
+        <div className="space-y-1 sm:space-y-2">
+          <Label htmlFor="attendeeCount" className="flex items-center text-gray-700 text-sm sm:text-base">
             <Users className="w-4 h-4 mr-2" />
             Attendee Count
           </Label>
@@ -178,7 +170,7 @@ const AddEvent: React.FC = () => {
             min="0"
             required
             placeholder="Enter attendee count"
-            className="border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+            className="border-gray-300 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
           />
         </div>
 

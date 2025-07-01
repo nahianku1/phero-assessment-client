@@ -70,7 +70,7 @@ const LoginPage: React.FC = () => {
   }, [state.success]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100">
+    <div className="min-h-screen flex items-center p-5 md:p-0 justify-center bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100">
       <Card className="w-full max-w-md bg-white border-gray-200 shadow-lg">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-gray-900 text-center">

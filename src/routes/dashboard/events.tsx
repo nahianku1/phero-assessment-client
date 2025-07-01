@@ -159,13 +159,13 @@ const Events: React.FC = () => {
   const currentUserEmail = user?.email || ""; // Get current user's email
 
   return (
-    <div className="p-6 space-y-8 max-w-6xl mx-auto min-h-screen flex flex-col">
+    <div className="p-4 sm:p-6 space-y-6 sm:space-y-8 max-w-6xl mx-auto min-h-screen flex flex-col">
       {/* Search and Filter */}
-      <div className="space-y-4 mb-6">
-        <div className="flex flex-col lg:flex-row gap-4">
+      <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
+        <div className="flex flex-col lg:flex-row gap-3 sm:gap-4">
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+            className="flex items-center gap-2 px-3 sm:px-4 py-2 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors text-sm sm:text-base"
           >
             <Filter className="w-4 h-4" />
             Filters
@@ -175,8 +175,8 @@ const Events: React.FC = () => {
           </button>
         </div>
         {showFilters && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-slate-50 rounded-lg">
-            <div className="md:col-span-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 p-3 sm:p-4 bg-slate-50 rounded-lg">
+            <div className="sm:col-span-1">
               <label className="block text-sm font-medium text-slate-700 mb-1">
                 Search Events
               </label>
@@ -189,11 +189,11 @@ const Events: React.FC = () => {
                   onChange={(e) =>
                     handleFilterChange(setSearchQuery)(e.target.value)
                   }
-                  className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-10 pr-3 sm:pr-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                 />
               </div>
             </div>
-            <div className="md:col-span-1">
+            <div className="sm:col-span-1">
               <label className="block text-sm font-medium text-slate-700 mb-1">
                 Date
               </label>
@@ -204,10 +204,10 @@ const Events: React.FC = () => {
                   handleFilterChange(setSelectedDate)(e.target.value)
                 }
                 max={new Date("2025-07-01").toISOString().split("T")[0]} // Current date
-                className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
               />
             </div>
-            <div className="md:col-span-1">
+            <div className="sm:col-span-1">
               <label className="block text-sm font-medium text-slate-700 mb-1">
                 Date Range
               </label>
@@ -222,9 +222,9 @@ const Events: React.FC = () => {
                       | "lastWeek"
                       | "currentMonth"
                       | "lastMonth"
-                  )
+                    )
                 }
-                className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
               >
                 <option value="all">All</option>
                 <option value="today">Today</option>
@@ -234,10 +234,10 @@ const Events: React.FC = () => {
                 <option value="lastMonth">Last Month</option>
               </select>
             </div>
-            <div className="md:col-span-3 flex justify-end">
+            <div className="sm:col-span-3 flex justify-end">
               <button
                 onClick={clearFilters}
-                className="flex items-center gap-2 px-4 py-2 text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors"
+                className="flex items-center gap-2 px-3 sm:px-4 py-2 text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors text-sm sm:text-base"
               >
                 <X className="w-4 h-4" />
                 Clear Filters
@@ -249,7 +249,7 @@ const Events: React.FC = () => {
 
       {/* Events Section */}
       <section className="flex-1">
-        <h2 className="text-2xl font-semibold text-gray-900 mb-4">All Events</h2>
+        <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-2 sm:mb-4">All Events</h2>
         {loading ? (
           <div className="flex-1 flex items-center justify-center text-gray-600">
             Loading events...
@@ -259,44 +259,44 @@ const Events: React.FC = () => {
             No events found.
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
             {events.map((event) => (
               <div
                 key={event._id}
-                className="bg-white shadow-lg rounded-lg p-4 hover:shadow-xl border border-gray-200 flex flex-col h-64" // Fixed height
+                className="bg-white shadow-lg rounded-lg p-2 sm:p-4 hover:shadow-xl border border-gray-200 flex flex-col h-64" // Reduced padding on mobile
               >
-                <div className="flex-1"> {/* Removed overflow-y-auto pr-2 */}
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                <div className="flex-1 overflow-y-auto pr-1 sm:pr-2"> {/* Added scroll for overflow */}
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-1 sm:mb-2">
                     {event.eventTitle}
                   </h3>
-                  <div className="text-sm text-gray-600 mb-1">
+                  <div className="text-xs sm:text-sm text-gray-600 mb-1">
                     Posted by: {event.name}
                   </div>
-                  <div className="text-sm text-gray-600 mb-1">
+                  <div className="text-xs sm:text-sm text-gray-600 mb-1">
                     {new Date(event.dateAndTime).toLocaleString("en-US", {
                       dateStyle: "medium",
                       timeStyle: "short",
                     })}
                   </div>
-                  <div className="text-sm text-gray-600 mb-1">
+                  <div className="text-xs sm:text-sm text-gray-600 mb-1">
                     Location: {event.location}
                   </div>
-                  <div className="text-sm text-gray-600 mb-2 max-w-xs">
+                  <div className="text-xs sm:text-sm text-gray-600 mb-1 sm:mb-2 max-w-xs">
                     <span className="line-clamp-2" title={event.description}>
                       {truncateDescription(event.description)}
                     </span>
                   </div>
-                  <div className="text-sm text-gray-600">
+                  <div className="text-xs sm:text-sm text-gray-600">
                     Attendees: {event.attendeeCount}
                   </div>
                 </div>
-                <div className="mt-4">
+                <div className="mt-2 sm:mt-4">
                   <form action={joinActionFn}>
                     <input type="hidden" name="eventId" value={event._id} />
                     <Button
                       type="submit"
                       size="sm"
-                      className="w-full bg-green-500 hover:bg-green-700 text-white"
+                      className="w-full bg-green-500 hover:bg-green-700 text-white text-xs sm:text-sm"
                       disabled={
                         event.joins.includes(currentUserEmail) ||
                         (joinState.eventId === event._id && joinState.error)
@@ -306,7 +306,7 @@ const Events: React.FC = () => {
                     </Button>
                   </form>
                   {joinState.eventId === event._id && joinState.error && (
-                    <p className="text-red-500 text-sm mt-2">{joinState.error}</p>
+                    <p className="text-red-500 text-xs sm:text-sm mt-1">{joinState.error}</p>
                   )}
                 </div>
               </div>
