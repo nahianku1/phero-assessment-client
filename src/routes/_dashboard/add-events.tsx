@@ -44,7 +44,7 @@ const AddEvent: React.FC = () => {
       }
 
       const response = await fetch(
-        "https://event-manager-server-vf31.onrender.com/events/create-event",
+        "http://localhost:3000/events/create-event",
         {
           method: "POST",
           headers: {
@@ -52,7 +52,6 @@ const AddEvent: React.FC = () => {
           },
           body: JSON.stringify(eventData),
           credentials: "include", // Include cookies for authentication
-          mode: "no-cors", // Ensure CORS is handled correctly
         }
       );
 

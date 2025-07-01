@@ -13,7 +13,7 @@ interface Event {
   description: string;
   attendeeCount: number;
   userEmail: string;
-  joins: string[]; 
+  joins: string[];
 }
 
 const Home: React.FC = () => {
@@ -69,10 +69,10 @@ const Home: React.FC = () => {
         if (user?.email) {
           // Logged-in user, fetch from API
           const response = await fetch(
-            "https://event-manager-server-vf31.onrender.com/events/all-events",
+            "http://localhost:3000/events/all-events",
             {
               credentials: "include",
-               mode: "no-cors", // Ensure CORS is handled correctly
+              
             }
           );
           if (!response.ok) throw new Error("Failed to fetch events");
@@ -103,7 +103,8 @@ const Home: React.FC = () => {
   const upcomingEvents = [...events]
     .filter((event) => new Date(event.dateAndTime) > now)
     .sort(
-      (a, b) => new Date(a.dateAndTime).getTime() - new Date(b.dateAndTime).getTime()
+      (a, b) =>
+        new Date(a.dateAndTime).getTime() - new Date(b.dateAndTime).getTime()
     )
     .slice(0, 3);
 
@@ -116,7 +117,8 @@ const Home: React.FC = () => {
   const upcomingEventsCount = [...events]
     .filter((event) => new Date(event.dateAndTime) > now)
     .sort(
-      (a, b) => new Date(a.dateAndTime).getTime() - new Date(b.dateAndTime).getTime()
+      (a, b) =>
+        new Date(a.dateAndTime).getTime() - new Date(b.dateAndTime).getTime()
     ).length;
 
   return (

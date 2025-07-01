@@ -55,10 +55,10 @@ const MyEvent: React.FC = () => {
       setLoading(true);
       try {
         const response = await fetch(
-          "https://event-manager-server-vf31.onrender.com/events/my-events",
+          "http://localhost:3000/events/my-events",
           {
             credentials: "include",
-            mode: "no-cors", // Ensure CORS is handled correctly
+            
           }
         );
         if (!response.ok) throw new Error("Failed to fetch events");
@@ -121,13 +121,12 @@ const MyEvent: React.FC = () => {
 
     try {
       const response = await fetch(
-        `https://event-manager-server-vf31.onrender.com/events/update-event/${selectedEvent._id}`,
+        `http://localhost:3000/events/update-event/${selectedEvent._id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(updatedEvent),
           credentials: "include",
-           mode: "no-cors", // Ensure CORS is handled correctly
         }
       );
 
@@ -148,11 +147,10 @@ const MyEvent: React.FC = () => {
   const handleDelete = async (eventId: string) => {
     try {
       const response = await fetch(
-        `https://event-manager-server-vf31.onrender.com/events/delete-event/${eventId}`,
+        `http://localhost:3000/events/delete-event/${eventId}`,
         {
           method: "DELETE",
           credentials: "include",
-           mode: "no-cors", // Ensure CORS is handled correctly
         }
       );
 
