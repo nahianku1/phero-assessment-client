@@ -30,7 +30,7 @@ const signupAction = async (
 
   try {
     const response = await fetch(
-      "https://event-manager-server-vf31.onrender.com/users/create-user",
+      "https://event-manager-dun.vercel.app/users/create-user",
       {
         method: "POST",
         headers: {

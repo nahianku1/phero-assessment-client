@@ -44,7 +44,7 @@ const AddEvent: React.FC = () => {
       }
 
       const response = await fetch(
-        "https://event-manager-server-vf31.onrender.com/events/create-event",
+        "https://event-manager-dun.vercel.app/events/create-event",
         {
           method: "POST",
           headers: {

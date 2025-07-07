@@ -55,7 +55,7 @@ const MyEvent: React.FC = () => {
       setLoading(true);
       try {
         const response = await fetch(
-          "https://event-manager-server-vf31.onrender.com/events/my-events",
+          "https://event-manager-dun.vercel.app/events/my-events",
           {
             credentials: "include",
             
@@ -121,7 +121,7 @@ const MyEvent: React.FC = () => {
 
     try {
       const response = await fetch(
-        `https://event-manager-server-vf31.onrender.com/events/update-event/${selectedEvent._id}`,
+        `https://event-manager-dun.vercel.app/events/update-event/${selectedEvent._id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -147,7 +147,7 @@ const MyEvent: React.FC = () => {
   const handleDelete = async (eventId: string) => {
     try {
       const response = await fetch(
-        `https://event-manager-server-vf31.onrender.com/events/delete-event/${eventId}`,
+        `https://event-manager-dun.vercel.app/events/delete-event/${eventId}`,
         {
           method: "DELETE",
           credentials: "include",
