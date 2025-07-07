@@ -81,7 +81,10 @@ const AddEvent: React.FC = () => {
       <form action={submitAction} className="space-y-3 sm:space-y-6">
         {/* Event Title */}
         <div className="space-y-1 sm:space-y-2">
-          <Label htmlFor="title" className="flex items-center text-gray-700 text-sm sm:text-base">
+          <Label
+            htmlFor="title"
+            className="flex items-center text-gray-700 text-sm sm:text-base"
+          >
             <Calendar className="w-4 h-4 mr-2" />
             Event Title
           </Label>
@@ -97,7 +100,10 @@ const AddEvent: React.FC = () => {
 
         {/* Posted By */}
         <div className="space-y-1 sm:space-y-2">
-          <Label htmlFor="postedBy" className="flex items-center text-gray-700 text-sm sm:text-base">
+          <Label
+            htmlFor="postedBy"
+            className="flex items-center text-gray-700 text-sm sm:text-base"
+          >
             <User className="w-4 h-4 mr-2" />
             Posted By
           </Label>
@@ -113,7 +119,10 @@ const AddEvent: React.FC = () => {
 
         {/* Date and Time */}
         <div className="space-y-1 sm:space-y-2">
-          <Label htmlFor="dateTime" className="flex items-center text-gray-700 text-sm sm:text-base">
+          <Label
+            htmlFor="dateTime"
+            className="flex items-center text-gray-700 text-sm sm:text-base"
+          >
             <Calendar className="w-4 h-4 mr-2" />
             Date and Time
           </Label>
@@ -128,7 +137,10 @@ const AddEvent: React.FC = () => {
 
         {/* Location */}
         <div className="space-y-1 sm:space-y-2">
-          <Label htmlFor="location" className="flex items-center text-gray-700 text-sm sm:text-base">
+          <Label
+            htmlFor="location"
+            className="flex items-center text-gray-700 text-sm sm:text-base"
+          >
             <MapPin className="w-4 h-4 mr-2" />
             Location
           </Label>
@@ -144,7 +156,10 @@ const AddEvent: React.FC = () => {
 
         {/* Description */}
         <div className="space-y-1 sm:space-y-2">
-          <Label htmlFor="description" className="flex items-center text-gray-700 text-sm sm:text-base">
+          <Label
+            htmlFor="description"
+            className="flex items-center text-gray-700 text-sm sm:text-base"
+          >
             <FileText className="w-4 h-4 mr-2" />
             Description
           </Label>
@@ -158,7 +173,10 @@ const AddEvent: React.FC = () => {
 
         {/* Attendee Count */}
         <div className="space-y-1 sm:space-y-2">
-          <Label htmlFor="attendeeCount" className="flex items-center text-gray-700 text-sm sm:text-base">
+          <Label
+            htmlFor="attendeeCount"
+            className="flex items-center text-gray-700 text-sm sm:text-base"
+          >
             <Users className="w-4 h-4 mr-2" />
             Attendee Count
           </Label>
@@ -203,18 +221,9 @@ const AddEvent: React.FC = () => {
 
 export default AddEvent;
 
-import { createFileRoute, redirect } from "@tanstack/react-router";
-import { isLoggedIn } from "@/utils/isLoggedIn";
+import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/add-events")({
   component: AddEvent,
-   beforeLoad: async () => {
-      const res = await isLoggedIn();
-      if (!res) {
-        throw redirect({
-          to: "/login",
-        });
-      }
-    },
- 
+
 });

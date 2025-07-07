@@ -19,8 +19,7 @@ import {
   Users,
   FileText,
 } from "lucide-react";
-import { createFileRoute, redirect } from "@tanstack/react-router";
-import { isLoggedIn } from "@/utils/isLoggedIn";
+import { createFileRoute } from "@tanstack/react-router";
 
 // Interface for Event
 interface Event {
@@ -412,12 +411,5 @@ export default MyEvent;
 
 export const Route = createFileRoute("/_dashboard/my-events")({
   component: MyEvent,
-  beforeLoad: async () => {
-    const res = await isLoggedIn();
-    if (!res) {
-      throw redirect({
-        to: "/login",
-      });
-    }
-  },
+
 });

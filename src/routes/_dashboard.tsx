@@ -5,6 +5,7 @@ import {
   useRouteContext,
   createFileRoute,
   useRouter,
+  redirect,
 } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -24,6 +25,7 @@ import {
 } from "@/components/ui/sheet";
 import { Home, Calendar, Plus, User, LogOut, Menu } from "lucide-react";
 import { provideRouteContext } from "@/utils/provideRouteContext";
+import { isLoggedIn } from "@/utils/isLoggedIn";
 
 interface User {
   name: string;
@@ -38,13 +40,10 @@ const Dashboard: React.FC = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch(
-        "https://event-manager-dun.vercel.app/auth/expire-token",
-        {
-          method: "POST",
-          credentials: "include",
-        }
-      );
+      const response = await fetch("https://event-manager-dun.vercel.app/auth/expire-token", {
+        method: "POST",
+        credentials: "include",
+      });
 
       if (response.ok) {
         console.log("Logged out successfully");
@@ -197,6 +196,17 @@ export default Dashboard;
 
 export const Route = createFileRoute("/_dashboard")({
   component: Dashboard,
-  beforeLoad: provideRouteContext
-  
+  beforeLoad: async ({ location }) => {
+
+    if (location.pathname !== "/") {
+      const res = await isLoggedIn();
+      if (!res) {
+        throw redirect({
+          to: "/login",
+        });
+      }
+    }
+
+    return await provideRouteContext();
+  },
 });
