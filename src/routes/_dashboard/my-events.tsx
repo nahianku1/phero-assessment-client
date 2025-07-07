@@ -19,8 +19,8 @@ import {
   Users,
   FileText,
 } from "lucide-react";
-import {  createFileRoute } from "@tanstack/react-router";
-
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { isLoggedIn } from "@/utils/isLoggedIn";
 
 // Interface for Event
 interface Event {
@@ -58,7 +58,6 @@ const MyEvent: React.FC = () => {
           "https://event-manager-dun.vercel.app/events/my-events",
           {
             credentials: "include",
-            
           }
         );
         if (!response.ok) throw new Error("Failed to fetch events");
@@ -413,4 +412,12 @@ export default MyEvent;
 
 export const Route = createFileRoute("/_dashboard/my-events")({
   component: MyEvent,
+  beforeLoad: async () => {
+    const res = await isLoggedIn();
+    if (!res) {
+      throw redirect({
+        to: "/login",
+      });
+    }
+  },
 });
