@@ -1,7 +1,7 @@
-import { createFileRoute, useRouteContext } from "@tanstack/react-router";
+import { createFileRoute, redirect, useRouteContext } from "@tanstack/react-router";
 import React, { useState, useEffect } from "react";
 import { Calendar, Users, Clock } from "lucide-react"; // Icons for cards
-import { provideRouteContext } from "@/utils/provideRouteContext";
+import { isLoggedIn } from "@/utils/isLoggedIn";
 
 // Interface for Event
 interface Event {
@@ -72,7 +72,6 @@ const Home: React.FC = () => {
             "https://event-manager-dun.vercel.app/events/all-events",
             {
               credentials: "include",
-              
             }
           );
           if (!response.ok) throw new Error("Failed to fetch events");
@@ -245,5 +244,12 @@ export default Home;
 
 export const Route = createFileRoute("/_dashboard/")({
   component: Home,
-  beforeLoad: provideRouteContext,
+  beforeLoad: async () => {
+    const res = await isLoggedIn();
+    if (!res) {
+      throw redirect({
+        to: "/login",
+      });
+    }
+  },
 });

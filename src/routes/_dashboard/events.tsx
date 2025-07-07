@@ -330,7 +330,6 @@ export default Events;
 
 import { createFileRoute } from "@tanstack/react-router";
 import { isLoggedIn } from "@/utils/isLoggedIn";
-import { provideRouteContext } from "@/utils/provideRouteContext";
 
 export const Route = createFileRoute("/_dashboard/events")({
   component: Events,
@@ -342,5 +341,4 @@ export const Route = createFileRoute("/_dashboard/events")({
       });
     }
   },
-  context: provideRouteContext,
 });
