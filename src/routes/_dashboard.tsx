@@ -5,7 +5,6 @@ import {
   useRouteContext,
   createFileRoute,
   useRouter,
-  redirect,
 } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -25,7 +24,6 @@ import {
 } from "@/components/ui/sheet";
 import { Home, Calendar, Plus, User, LogOut, Menu } from "lucide-react";
 import { provideRouteContext } from "@/utils/provideRouteContext";
-import { isLoggedIn } from "@/utils/isLoggedIn";
 
 interface User {
   name: string;
@@ -199,13 +197,6 @@ export default Dashboard;
 
 export const Route = createFileRoute("/_dashboard")({
   component: Dashboard,
-  beforeLoad: async () => {
-    const res = await isLoggedIn();
-    if (!res) {
-      throw redirect({
-        to: "/login",
-      });
-    }
-    return await provideRouteContext();
-  },
+  beforeLoad: provideRouteContext
+  
 });
