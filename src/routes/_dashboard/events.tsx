@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useActionState } from "react";
-import { redirect, useRouteContext } from "@tanstack/react-router";
+import { useRouteContext } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, X, Filter, Search } from "lucide-react";
 
@@ -329,16 +329,8 @@ const Events: React.FC = () => {
 export default Events;
 
 import { createFileRoute } from "@tanstack/react-router";
-import { isLoggedIn } from "@/utils/isLoggedIn";
 
 export const Route = createFileRoute("/_dashboard/events")({
   component: Events,
-  beforeLoad: async () => {
-    const res = await isLoggedIn();
-    if (!res) {
-      throw redirect({
-        to: "/login",
-      });
-    }
-  },
+  
 });

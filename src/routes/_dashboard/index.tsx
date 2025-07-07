@@ -1,7 +1,6 @@
-import { createFileRoute, redirect, useRouteContext } from "@tanstack/react-router";
+import { createFileRoute,  useRouteContext } from "@tanstack/react-router";
 import React, { useState, useEffect } from "react";
 import { Calendar, Users, Clock } from "lucide-react"; // Icons for cards
-import { isLoggedIn } from "@/utils/isLoggedIn";
 
 // Interface for Event
 interface Event {
@@ -244,12 +243,5 @@ export default Home;
 
 export const Route = createFileRoute("/_dashboard/")({
   component: Home,
-  beforeLoad: async () => {
-    const res = await isLoggedIn();
-    if (!res) {
-      throw redirect({
-        to: "/login",
-      });
-    }
-  },
+ 
 });
