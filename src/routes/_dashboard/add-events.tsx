@@ -1,6 +1,5 @@
 import React from "react";
 import { useActionState } from "react";
-import { redirect } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button"; // shadcn/ui Button
 import { Input } from "@/components/ui/input"; // shadcn/ui Input
 import { Textarea } from "@/components/ui/textarea"; // shadcn/ui Textarea
@@ -205,16 +204,8 @@ const AddEvent: React.FC = () => {
 export default AddEvent;
 
 import { createFileRoute } from "@tanstack/react-router";
-import { isLoggedIn } from "@/utils/isLoggedIn";
 
 export const Route = createFileRoute("/_dashboard/add-events")({
   component: AddEvent,
-  beforeLoad: async () => {
-    const res = await isLoggedIn();
-    if (!res) {
-      throw redirect({
-        to: "/login",
-      });
-    }
-  },
+ 
 });

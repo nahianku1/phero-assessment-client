@@ -100,7 +100,7 @@ const Events: React.FC = () => {
           body: JSON.stringify({ userEmail }),
           credentials: "include",
         }
-      )
+      );
 
       if (response.ok) {
         // Refetch events to get updated data
@@ -332,5 +332,4 @@ import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_dashboard/events")({
   component: Events,
-  
 });
